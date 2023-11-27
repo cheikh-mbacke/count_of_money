@@ -3,17 +3,15 @@ const User = db.User;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-exports.signup = async (req, res) => {
+exports.register = async (req, res) => {
   const { pseudo, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ where: { email: email } });
     if (existingUser) {
-      return res
-        .status(409)
-        .json({
-          message: "Un compte utilisateur avec cet e-mail existe déjà.",
-        });
+      return res.status(409).json({
+        message: "Un compte utilisateur avec cet e-mail existe déjà.",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

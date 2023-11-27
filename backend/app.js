@@ -3,7 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const swaggerUi = require("swagger-ui-express");
-const authRoutes = require("./routes/auth");
+const authRoutes = require("./routes/user");
 const swaggerSpec = require("./config/swagger");
 const { sequelize } = require("./models");
 const corsMiddleware = require("./middlewares/cors");
@@ -23,7 +23,7 @@ app.use(corsMiddleware);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/users/", authRoutes);
 
 // Synchronisation de la base de données
 sequelize

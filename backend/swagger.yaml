@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   description: Description de votre API
 paths:
-  /api/auth/signup:
+  /api/users/register:
     post:
       summary: Inscription d'un nouvel utilisateur
       description: Crée un nouvel utilisateur dans le système
@@ -32,7 +32,7 @@ paths:
           description: Compte utilisateur créé avec succès.
         500:
           description: Une erreur s'est produite lors de la création du compte utilisateur.
-  /api/auth/login:
+  /api/users/login:
     post:
       summary: Connexion d'un utilisateur
       description: Authentifie un utilisateur et retourne un token JWT
