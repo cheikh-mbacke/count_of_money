@@ -1,0 +1,61 @@
+openapi: 3.0.0
+info:
+  title: Nom de votre API
+  version: "1.0.0"
+  description: Description de votre API
+paths:
+  /api/auth/signup:
+    post:
+      summary: Inscription d'un nouvel utilisateur
+      description: Crée un nouvel utilisateur dans le système
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pseudo
+                - email
+                - password
+              properties:
+                pseudo:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        201:
+          description: Compte utilisateur créé avec succès.
+        500:
+          description: Une erreur s'est produite lors de la création du compte utilisateur.
+  /api/auth/login:
+    post:
+      summary: Connexion d'un utilisateur
+      description: Authentifie un utilisateur et retourne un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: Connexion réussie.
+        401:
+          description: "Échec de l'authentification : identifiants invalides."
+        500:
+          description: Une erreur serveur s'est produite lors de la tentative de connexion.
