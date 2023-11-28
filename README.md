@@ -25,6 +25,10 @@ Pour utiliser ce projet, assurez-vous d'avoir installé :
    ```
    node generateKey.js
    ```
+2. Créez une base de données
+   ```sql
+   CREATE DATABASE count_of_money;
+   ```
 2. Créez un utilisateur et un mot de passe en exécutant dans MySQL :
     ```sql
     CREATE USER 'count_of_money'@'localhost' IDENTIFIED BY 'votre_mot_de_passe';
