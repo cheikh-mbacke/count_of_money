@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Nom de votre API
+  title: Count Of Money
   version: "1.0.0"
   description: Description de votre API
 paths:
@@ -30,8 +30,37 @@ paths:
       responses:
         201:
           description: Compte utilisateur créé avec succès.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Compte utilisateur créé avec succès"
+        409:
+          description: "Un compte utilisateur avec cet e-mail existe déjà."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Un compte utilisateur avec cet e-mail existe déjà."
         500:
-          description: Une erreur s'est produite lors de la création du compte utilisateur.
+          description: Une erreur serveur s'est produite lors de la tentative de connexion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Une erreur s'est produite lors du traitement de la demande."
+                  error:
+                    type: string
+                    description: "Le message détaillant l'erreur survenue."
   /api/users/login:
     post:
       summary: Connexion d'un utilisateur
@@ -55,7 +84,47 @@ paths:
       responses:
         200:
           description: Connexion réussie.
-        401:
-          description: "Échec de l'authentification : identifiants invalides."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Connexion réussie."
+                  userId:
+                    type: integer
+                    description: "L'ID de l'utilisateur authentifié."
+                  role:
+                    type: string
+                    description: "Le rôle attribué à l'utilisateur."
+                  token:
+                    type: string
+                    description: "Le token JWT généré pour l'authentification."
         500:
           description: Une erreur serveur s'est produite lors de la tentative de connexion.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Une erreur s'est produite lors du traitement de la demande."
+                  error:
+                    type: string
+                    description: "Le message détaillant l'erreur survenue."
+        401:
+          description: "Échec de l'authentification : identifiants invalides."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Échec de l'authentification : identifiants invalides."
+
+
+          
+
