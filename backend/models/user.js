@@ -27,7 +27,7 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
-  User.hasMany(Role, { foreignKey: "id" });
+  User.hasMany(Role, { foreignKey: "userId" });
   Role.belongsTo(User, { foreignKey: "userId" });
 
   return [User, Role];
