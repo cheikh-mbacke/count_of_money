@@ -112,7 +112,7 @@ const Signup = () => {
 
             <button
                 type="submit"
-                className="flex bg-blue-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-blue-700 mx-auto mt-3"
+                className="flex bg-green-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-green-700 mx-auto mt-3"
             >
                 Register
             </button>

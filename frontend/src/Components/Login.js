@@ -3,7 +3,6 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import UserService from "../Actions/User"
 import userService from "../Actions/User";
 
 const Login = () => {
@@ -75,14 +74,13 @@ const Login = () => {
                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                 </button>
                 {formik.touched.password && formik.errors.password && (
-                    <div className="text-red-500 text-sm ">*</div>
+                    <div className="text-red-500 text-sm ">{formik.errors.password}</div>
                 )}
             </div>
 
             <button
                 type="submit"
-                className="flex bg-blue-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-blue-700 mx-auto my-auto"
-            >
+                className="flex bg-green-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-green-700 mx-auto my-auto">
                 Login
             </button>
 
