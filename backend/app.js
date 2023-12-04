@@ -37,7 +37,7 @@ app.use("/api/users/", authRoutes);
 
 // Synchronisation de la base de données
 sequelize
-  .sync()
+  .sync({ force: true })
   .then(async () => {
     console.log("Database synced");
     try {
