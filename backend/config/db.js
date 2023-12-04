@@ -1,7 +1,7 @@
 module.exports = {
   HOST: "localhost",
   USER: "count_of_money",
-  PASSWORD: "count_of_money",
+  PASSWORD: "ahmed123",
   DB: "count_of_money",
   DIALECT: "mysql",
   POOL: {
