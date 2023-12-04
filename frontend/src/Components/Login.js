@@ -3,6 +3,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import UserService from "../Actions/User"
+import userService from "../Actions/User";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +22,9 @@ const Login = () => {
         validationSchema: validationSchema,
         onSubmit: (values) => {
             // Handle form submission logic
+            userService.Login(values)
+                .then(r => console.log("avec succes"))
+                .catch(error => console.log("Error",error))
             console.log(values);
         },
     });
