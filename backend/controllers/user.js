@@ -33,6 +33,7 @@ exports.register = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Une erreur s'est produite lors du traitement de la demande.",
+      erreur: error.message
     });
   }
 };
@@ -55,7 +56,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    const roleName = await Role.findOne({ where: { userId: user.id } });
+    const roleName = await Role.findOne({ where: { id: user.id } });
 
     const token = jwt.sign(
       { userId: user.id, role: roleName },
