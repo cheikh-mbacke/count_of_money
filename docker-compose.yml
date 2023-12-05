@@ -1,7 +1,7 @@
 version: '3'
 services:
   mysql:
-    image: mysql/mysql-server:5.7
+    image: mysql/mysql-server:8.0.19-1.1.15-aarch64
     container_name: mysql-count_of_money
     ports:
       - "3306:3306"
