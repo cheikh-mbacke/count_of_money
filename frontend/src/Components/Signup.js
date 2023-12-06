@@ -3,6 +3,7 @@
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import userService from '../Actions/User';
 
 const Signup = () => {
     const validationSchema = Yup.object({
@@ -12,10 +13,12 @@ const Signup = () => {
             .required('Required')
             .test(
                 'pseudoEmail',
-                'Email must start with "user" and end with "@example.com"',
-                (value) => /^user.*@example\.com$/.test(value)
+                'Email must start with "user." "',
+                (value) => /^user.*@*\.com$/.test(value)
             ),
-        password: Yup.string().min(6, 'Password must be at least 6 characters').required('Required'),
+        password: Yup.string()
+            .min(6, 'Password must be at least 6 characters')
+            .required('Required'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), null], 'Passwords must match')
             .required('Required'),
@@ -30,8 +33,14 @@ const Signup = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
+            console.log(values);
+
+            const { confirmPassword, ...registrationData } = values;
+
+            console.log(registrationData);
             // Replace the alert with your actual registration logic
-            alert(`Registration successful!\nPseudo: ${values.pseudo}\nEmail: ${values.email}\nPassword: ${values.password}`);
+            userService.Register(registrationData)
+            //alert(`Registration successful !!}`);
         },
     });
 
@@ -49,7 +58,7 @@ const Signup = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.pseudo}
-                    className={`form-input ${formik.touched.pseudo && formik.errors.pseudo ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
+                    className={`form-input ${formik.touched.pseudo && formik.errors.pseudo ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded text-black`}
                 />
                 {formik.touched.pseudo && formik.errors.pseudo && (
                     <div className="text-red-500 text-sm ml-2">{formik.errors.pseudo}</div>
@@ -67,7 +76,7 @@ const Signup = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.email}
-                    className={`form-input ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
+                    className={`text-black form-input ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
                 />
                 {formik.touched.email && formik.errors.email && (
                     <div className="text-red-500 text-sm ml-2">{formik.errors.email}</div>
@@ -85,7 +94,7 @@ const Signup = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.password}
-                    className={`form-input ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
+                    className={`text-black form-input ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
                 />
                 {formik.touched.password && formik.errors.password && (
                     <div className="text-red-500 text-sm ml-2">{formik.errors.password}</div>
@@ -103,7 +112,7 @@ const Signup = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.confirmPassword}
-                    className={`form-input ${formik.touched.confirmPassword && formik.errors.confirmPassword ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
+                    className={`text-black form-input ${formik.touched.confirmPassword && formik.errors.confirmPassword ? 'border-red-500' : 'border-gray-500'} focus:outline-none focus:border-blue-500 px-3 py-2 rounded`}
                 />
                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                     <div className="text-red-500 text-sm ml-2">{formik.errors.confirmPassword}</div>

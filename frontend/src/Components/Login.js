@@ -22,9 +22,7 @@ const Login = () => {
         onSubmit: (values) => {
             // Handle form submission logic
             userService.Login(values)
-                .then(r => console.log("avec succes"))
-                .catch(error => console.log("Error",error))
-            console.log(values);
+            window.localStorage.setItem('user', values)
         },
     });
 
