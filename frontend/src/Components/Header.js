@@ -28,7 +28,7 @@ const Header = () => {
                 </div>
                 <div className="flex space-x-4">
                     {
-                    window.localStorage.getItem('user') ? 
+                    !window.localStorage.getItem('user') ?
                     <>
                         <Link to="/login">
                             <button className="text-xl text-white px-4 py-2 transition duration-300">Login</button>
@@ -46,26 +46,17 @@ const Header = () => {
                                     <a href="#" className="text-white group-hover:underline">Profil</a>
                                         <ul className="absolute hidden bg-white p-2 space-y-2 top-full left-0 group-hover:block transition-all duration-300">
                                             <li><Link to="/login" className="text-gray-800 hover:underline">Profil</Link></li>
-                                            <li><Link to="/login" className="text-gray-800 hover:underline">Logout</Link></li>
+                                            <li><Link to="/login" className="text-gray-800 hover:underline"
+                                            onClick={() =>{
+                                                window.localStorage.clear()
+                                            }}
+                                            >Logout</Link></li>
                                         </ul>
                                 </li>
                             </ul>
                         </nav>
                     </>
                     }
-                </div>
-                <div className="flex space-x-4">
-                    <nav>
-                        <ul className="flex space-x-4">
-                            <li className="relative group">
-                            <a href="#" className="text-white group-hover:underline">Profil</a> 
-                            <ul className="absolute hidden bg-white p-2 space-y-2 top-full left-0 group-hover:block transition-all duration-300">
-                                <li><Link to="/login" className="text-gray-800 hover:underline">Profil</Link></li>
-                                <li><Link to="/login" className="text-gray-800 hover:underline">Logout</Link></li>
-                            </ul>
-                            </li>
-                        </ul>
-                    </nav>
                 </div>
             </div>
         </header>
