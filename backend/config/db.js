@@ -1,7 +1,7 @@
 module.exports = {
-  HOST: "localhost", // Utilisez le nom du service du conteneur MySQL
+  HOST: "mysql",
   USER: "count_of_money",
-  PASSWORD: "14785",
+  PASSWORD: "count_of_money",
   DB: "count_of_money",
   DIALECT: "mysql",
   POOL: {
