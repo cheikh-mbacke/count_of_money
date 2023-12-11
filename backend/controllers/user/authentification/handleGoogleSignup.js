@@ -1,13 +1,20 @@
+const GoogleAuthClient = require("./googleAuthClient");
 const db = require("../../../models");
 const User = db.User;
 const Role = db.Role;
 const sequelize = db.sequelize;
-const bcrypt = require("bcrypt");
 
-exports.register = async (req, res) => {
-  const { pseudo, email, password, role } = req.body;
+exports.handleGoogleSignup = async (req, res) => {
   let transaction;
   try {
+    const redirectUriIndex = 0;
+    const googleAuthClient = new GoogleAuthClient(redirectUriIndex);
+    const code = req.query.code;
+
+    const { tokens } = await googleAuthClient.exchangeCodeForTokens(code);
+    googleAuthClient.oauth2Client.setCredentials(tokens);
+    const { email, name } = await googleAuthClient.fetchUserEmail();
+
     // Début de la transaction
     transaction = await sequelize.transaction();
 
@@ -24,34 +31,24 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Création de l'utilisateur
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create(
-      {
-        pseudo,
-        email,
-        password: hashedPassword,
-      },
-      { transaction }
-    );
+    const pseudo = name;
 
-    // Création de rôle
-    const userRole = role || "user";
+    // Création de l'utilisateur sans mot de passe
+    const newUser = await User.create({ pseudo, email }, { transaction });
+    const userRole = "user";
 
     await Role.create(
       { userId: newUser.id, roleName: userRole },
       { transaction }
     );
 
-    // Validation de la transaction
     await transaction.commit();
     res.status(201).json({ message: "Compte utilisateur créé avec succès" });
-  } catch (error) {
+  } catch (e) {
     // Vérifier si la transaction a été initialisée avant d'essayer de faire un rollback
     if (transaction) {
       await transaction.rollback();
     }
-    console.log(error);
     res.status(500).json({
       message: "Une erreur s'est produite lors du traitement de la demande.",
     });
