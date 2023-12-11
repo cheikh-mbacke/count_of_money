@@ -62,8 +62,8 @@ class GoogleAuthClient {
       keys.redirect_uris[redirectUriIndex];
 
     return new google.auth.OAuth2(
-      keys.client_id,
-      keys.client_secret,
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
       redirectUri
     );
   }
