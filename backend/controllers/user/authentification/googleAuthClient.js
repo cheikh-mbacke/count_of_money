@@ -51,18 +51,19 @@ class GoogleAuthClient {
     });
   }
 
-  createOAuthClient(uriIndex) {
+  createOAuthClient(redirectUriIndex) {
     const keyPath = path.join(__dirname, "keys.json");
     let keys = { redirect_uris: [""] };
     if (fs.existsSync(keyPath)) {
       keys = require(keyPath).web;
     }
 
-    const redirectUri = keys.redirect_uris[uriIndex] || keys.redirect_uris[0];
+    const redirectUri =
+      keys.redirect_uris[redirectUriIndex];
 
     return new google.auth.OAuth2(
-      keys.client_id,
-      keys.client_secret,
+      process.env.CLIENT_ID,
+      process.env.CLIENT_SECRET,
       redirectUri
     );
   }

@@ -3,11 +3,11 @@ require("dotenv").config();
 const express = require("express");
 const helmet = require("helmet");
 const swaggerUi = require("swagger-ui-express");
-const authRoutes = require("./routes/user");
+const authRoutes = require("./routes/userRoutes");
 const swaggerSpec = require("./config/swagger");
 const { sequelize } = require("./models");
 const corsMiddleware = require("./middlewares/cors");
-const { createAdminAccount } = require("./controllers/user/auth");
+const { createAdminAccount } = require("./controllers/user/");
 
 const app = express();
 
