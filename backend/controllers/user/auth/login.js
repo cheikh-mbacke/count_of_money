@@ -11,19 +11,18 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
       return res.status(401).json({
-        message: "Échec de l'authentification : identifiants invalides.",
+        message: "Échec de l'authentification : EMAIL invalides.",
       });
     }
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return res.status(401).json({
-        message: "Échec de l'authentification : identifiants invalides.",
+        message: "Échec de l'authentification : MDP invalides.",
       });
     }
 
     const roleName = await Role.findOne({ where: { userId: user.id } });
-
     const token = jwt.sign(
       { userId: user.id, role: roleName },
       process.env.JWT_SECRET,
@@ -37,6 +36,7 @@ exports.login = async (req, res) => {
       userId: user.id,
       role: roleName,
       token: token,
+      pseudo: user.pseudo,
     });
   } catch (error) {
     res.status(500).json({

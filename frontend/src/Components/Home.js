@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import Video from "../Assets/Videos/video-unscreen.gif"
 
 const Home = () => {
@@ -9,6 +9,7 @@ const Home = () => {
                 <span className="">a</span>
                 <span className="text-white">Crypto Better</span>
             </div>
+
             <div className="w-1/4 text-left text-white text-4xl font-serif break-words mt-5">Simple, one-step trading…</div>
             <div className="w-1/4 text-left text-4xl font-serif break-words mt-5">
                 <span className="text-white">Count-of-money is the</span>

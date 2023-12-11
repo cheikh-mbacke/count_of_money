@@ -4,19 +4,16 @@ import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import userService from '../Actions/User';
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import crypto from "../Assets/Images/cryptocurrancy.png";
 
 const Signup = () => {
+    const navigate = useNavigate()
     const validationSchema = Yup.object({
         pseudo: Yup.string().required('Required'),
         email: Yup.string()
             .email('Invalid email address')
-            .required('Required')
-            .test(
-                'pseudoEmail',
-                'Email must start with "user." "',
-                (value) => /^user.*@*\.com$/.test(value)
-            ),
+            .required('Required'),
         password: Yup.string()
             .min(6, 'Password must be at least 6 characters')
             .required('Required'),
@@ -33,20 +30,26 @@ const Signup = () => {
             confirmPassword: '',
         },
         validationSchema: validationSchema,
-        onSubmit: (values) => {
-            console.log(values);
-
-            const { confirmPassword, ...registrationData } = values;
-
-            console.log(registrationData);
+        onSubmit: async (values) => {
+            const {confirmPassword, ...registrationData} = values;
             // Replace the alert with your actual registration logic
-            userService.Register(registrationData)
-            //alert(`Registration successful !!}`);
+            const response = await userService.Register(registrationData)
+            alert(response.message)
+            navigate("/login")
         },
     });
 
     return (
-        <div className="flex-grow bg-black">
+        <div className="flex flex-grow items-center justify-center bg-black ">
+            <div className="w-1/2 p-8 max-w-md">
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-green-900">
+                    The easiest way to invest</h2>
+                <p className="text-white">Trade between multiple asset classes from one convenient account.
+                    A large number of assets are now less than a minute away.</p>
+                <img src={crypto} alt={"cryptocurrancies logo"}/>
+            </div>
+
+            <div className="w-1/2">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-green-900">
                 Join Count_Of_Money
             </h2>
@@ -146,6 +149,7 @@ const Signup = () => {
             </p>
         </form>
         </div>
+            </div>
     );
 };
 

@@ -4,9 +4,14 @@ import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import userService from "../Actions/User";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import crypto from "../Assets/Images/cryptocurrancy.png"
+import {login} from "../Actions/authActions";
+import { useDispatch } from 'react-redux';
 
 const Login = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
 
     const validationSchema = Yup.object({
@@ -20,10 +25,11 @@ const Login = () => {
             password: '',
         },
         validationSchema: validationSchema,
-        onSubmit: (values) => {
-            // Handle form submission logic
-            userService.Login(values)
-            window.localStorage.setItem('user', values)
+        onSubmit: async (values) => {
+            const user = await userService.Login(values)
+            dispatch(login(user));
+            navigate("/profile");
+
         },
     });
 
@@ -32,7 +38,16 @@ const Login = () => {
     };
 
     return (
-        <div className="flex-grow bg-black">
+        <div className="flex flex-grow items-center justify-center bg-black ">
+            <div className="w-1/2 p-8 max-w-md">
+                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-green-900">
+                    The easiest way to invest</h2>
+                <p className="text-white">Trade between multiple asset classes from one convenient account.
+                    A large number of assets are now less than a minute away.</p>
+                <img src={crypto} alt={"cryptocurrancies logo"}/>
+            </div>
+
+            <div className="w-1/2">
             <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-green-900">
                 Log in to Count_Of_Money
             </h2>
@@ -58,7 +73,7 @@ const Login = () => {
                         )}
                 </div>
 
-                <div className="mb-4 flex flex-col">
+                <div className="mb-4 flex flex-col ">
                     <div className="flex items-center">
                         <label htmlFor="password" className="w-2/5 block text-sm font-bold mr-2">
                             Password:
@@ -90,7 +105,7 @@ const Login = () => {
                 <button
                     type="submit"
                     className="flex bg-green-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-green-700 mx-auto my-auto">
-                    Login
+                    Log in
                 </button>
 
                 <p className="mt-10 text-center text-sm text-gray-500">
@@ -100,6 +115,7 @@ const Login = () => {
                     </Link>
                 </p>
             </form>
+            </div>
         </div>
     );
 };
