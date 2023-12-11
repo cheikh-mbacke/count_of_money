@@ -41,7 +41,7 @@ Pour utiliser ce projet, assurez-vous d'avoir installé :
 Pour démarrer l application :
 1. Lancez le serveur avec Nodemon :
    ```
-   nodemon server
+   npm start 
    ```
 2. Accédez à l'application via :
     ```

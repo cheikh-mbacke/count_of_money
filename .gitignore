@@ -1,2 +1,7 @@
-node_modules/
-.env
+.idea/*
+frontend/node_modules/*
+frontend/dist/*
+backend/.idea/*
+backend/.gradle/*
+backend/build/*
+backend/out/*

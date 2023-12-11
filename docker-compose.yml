@@ -1,10 +1,8 @@
 version: '3'
 services:
   mysql:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: mysql-count-of-money
+    image: mysql/mysql-server:8.0.19-1.1.15-aarch64
+    container_name: mysql-count_of_money
     ports:
       - "3306:3306"
     environment:
@@ -13,18 +11,21 @@ services:
       MYSQL_USER: count_of_money
       MYSQL_PASSWORD: count_of_money
 
+  react:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react-app
+    ports:
+      - "80:80"
+
+
   express:
     build:
-      context: ./backend  # Chemin vers le répertoire du backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: express-app
     ports:
       - "3000:3000"
-
-  react:
-    build:
-      context: ./frontend  # Chemin vers le répertoire du frontend
-      dockerfile: Dockerfile
-    container_name: react-app
-    ports:
-      - "80:80"  # Utilisez le port 80 pour Nginx du service React
+    depends_on:
+      - mysql
