@@ -8,7 +8,7 @@ const Contact = () => {
     // Si l'envoi a réussi, affichez un message de remerciement sans changer la structure de la page
     if (state.succeeded) {
         return (
-            <div className="flex flex-col items-center justify-center bg-black p-4">
+            <div className="flex flex-grow flex-col items-center justify-center bg-black p-4">
                 <div className="w-full max-w-md p-8 rounded-lg shadow-lg bg-gradient-to-r from-green-500 to-black">
                     <p className="text-white text-center">Thank you for your message!</p>
                 </div>
@@ -17,7 +17,7 @@ const Contact = () => {
     }
     return (
         <div className=" flex flex-grow bg-black">
-            <div className="flex flex-auto items-center justify-center  bg-black p-4">
+            <div className="flex flex-auto items-center justify-center bg-black p-4">
                 <div className="w-1/2 max-w-md p-8 rounded-lg shadow-lg bg-gradient-to-r from-green-500 to-black">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>

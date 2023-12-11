@@ -3,7 +3,7 @@ import React, { useEffect, Fragment } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { logout } from '../Actions/authActions';
-import Logo from "../Assets/Images/logo.png"
+import Logo from "../Assets/Images/logo11.png"
 import { Menu, Transition } from '@headlessui/react'
 const Header = () => {
     const user = useSelector((state) => state.auth.user);
@@ -56,28 +56,6 @@ const Header = () => {
                         </>
                     ) : (
                         <>
-                            {/*<nav>*/}
-                            {/*    <ul className="list-disc flex space-x-4">*/}
-                            {/*        <li className="relative group">*/}
-                            {/*            <span className="text-white cursor-pointer group-hover:underline">Profile</span>*/}
-                            {/*            <ul className="absolute hidden bg-white p-2 space-y-2 top-full left-0 group-hover:block transition-all duration-300">*/}
-                            {/*                <li>*/}
-                            {/*                    <NavLink to="/profile" className="text-gray-800 hover:underline">*/}
-                            {/*                        Profile*/}
-                            {/*                    </NavLink>*/}
-                            {/*                </li>*/}
-                            {/*                <li>*/}
-                            {/*                    <button className="text-gray-800 hover:underline" onClick={handleLogout}>*/}
-                            {/*                        <NavLink to="/login" className="text-gray-800 hover:underline">*/}
-                            {/*                            LogOut*/}
-                            {/*                        </NavLink>*/}
-                            {/*                    </button>*/}
-                            {/*                </li>*/}
-                            {/*            </ul>*/}
-                            {/*        </li>*/}
-                            {/*    </ul>*/}
-                            {/*</nav>*/}
-                             Profile dropdown
                             <Menu as="div" className="relative ml-3">
                                 <div>
                                     <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
