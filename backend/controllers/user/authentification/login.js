@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
         });
     }
 
-    const roleName = await authHelper.assignDefaultRole(user.id);
+    const roleName = await authHelper.getUserRole(user.id);
     const token = authHelper.generateToken(user.id, roleName);
 
     res.status(200).json({

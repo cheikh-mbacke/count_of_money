@@ -68,6 +68,14 @@ class AuthHelper {
       throw new Error(error);
     }
   }
+
+  async getUserRole(userId) {
+    try {
+      return await this.Role.findOne({ where: { userId: userId } });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
 
 module.exports = AuthHelper;
