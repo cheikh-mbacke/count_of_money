@@ -26,17 +26,16 @@ exports.login = async (req, res) => {
         });
     }
 
-    const roleName = await authHelper.getUserRole(user.id);
+    const {roleName} = await authHelper.getUserRole(user.id);
     const token = authHelper.generateToken(user.id, roleName);
 
     res.status(200).json({
       message: "Connexion réussie.",
       userId: user.id,
-      role: roleName,
+      roleName: roleName,
       token: token,
     });
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json({

@@ -34,14 +34,14 @@ class AuthHelper {
     );
   }
 
-  async createUser({ email, name, password }, transaction = null) {
+  async createUser({ email, pseudo, password }, transaction = null) {
     try {
       const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
       const options = transaction ? { transaction } : {};
       const newUser = await this.User.create(
         {
           email,
-          name,
+          pseudo,
           password: hashedPassword,
         },
         options
@@ -71,7 +71,10 @@ class AuthHelper {
 
   async getUserRole(userId) {
     try {
-      return await this.Role.findOne({ where: { userId: userId } });
+      return await this.Role.findOne({
+        where: { userId: userId },
+        attributes: ["roleName"],
+      });
     } catch (error) {
       throw new Error(error);
     }
