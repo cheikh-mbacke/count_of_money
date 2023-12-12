@@ -6,7 +6,8 @@ const Profile = () => {
 
     return (
         <div className=" flex-grow bg-black">
-            <p className="text-white"> pseudo : {user.pseudo}</p>
+            <p className="text-white"> pseudo : {user.userId}</p>
+            <p className="text-white"> Role : {user.role.roleName}</p>
         </div>
     );
 };

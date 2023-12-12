@@ -6,6 +6,10 @@ import * as Yup from 'yup';
 import userService from '../Actions/User';
 import {Link, useNavigate} from "react-router-dom";
 import crypto from "../Assets/Images/cryptocurrancy.png";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGoogle} from "@fortawesome/free-brands-svg-icons";
+
+
 
 const Signup = () => {
     const navigate = useNavigate()
@@ -38,6 +42,10 @@ const Signup = () => {
             navigate("/login")
         },
     });
+
+    const handleClick = () => {
+        window.open('http://localhost:3000/api/users/auth/google/initiate?authType=signup');
+    };
 
     return (
         <div className="flex flex-grow items-center justify-center bg-black ">
@@ -141,6 +149,15 @@ const Signup = () => {
             >
                 Register
             </button>
+                <div className="flex flex-row justify-center mt-4 px-4 py-2 rounded">
+                    <button
+                        onClick={handleClick}
+                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        <FontAwesomeIcon icon={faGoogle} className="mr-2" />
+                        S'Inscrire avec Google
+                    </button>
+                </div>
             <p className="mt-10 text-center text-sm text-gray-500">
                 Already have an account?{' '}
                 <Link to="/login" className="font-semibold leading-6 text-green-600 hover:text-green-500">

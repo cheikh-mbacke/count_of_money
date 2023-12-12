@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import userService from "../Actions/User";
 import {Link, useNavigate} from "react-router-dom";
 import crypto from "../Assets/Images/cryptocurrancy.png"
 import {login} from "../Actions/authActions";
 import { useDispatch } from 'react-redux';
-import { GoogleLogin } from 'react-google-login';
-
 
 const Login = () => {
+    const [authStatus, setAuthStatus] = useState(null); // 'null', 'loading', 'authenticated', 'error'
+    const [userDetails, setUserDetails] = useState(null);
+    const [token, setToken] = useState(null);
+
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
@@ -35,13 +38,81 @@ const Login = () => {
         },
     });
 
+    const handleClick = () => {
+
+        setAuthStatus('loading'); // Set loading status
+
+        // Redirect to the backend endpoint for Google login
+        window.open('http://localhost:3000/api/users/auth/google/initiate?authType=signin');
+    };
+
+    const handleCallback = () => {
+        // Check if there is an authentication code in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            // Call the backend authentication function
+            handleBackendAuthentication(code);
+        }
+    };
+
+    useEffect(() => {
+        handleCallback();
+    }, []);
+
+    const handleBackendAuthentication = async (code) => {
+        try {
+            // Make a request to your backend to handle Google login
+            const response = await fetch('http://localhost:3000/api/users/auth/google/initiate?authType=signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setAuthStatus('authenticated');
+                setUserDetails(data);
+                setToken(data.token);
+            } else {
+                // Handle specific error cases
+                if (response.status === 401) {
+                    setAuthStatus('error');
+                    console.error('Authentication failed: Invalid credentials.');
+                } else if (response.status === 500) {
+                    setAuthStatus('error');
+                    console.error('Authentication failed: Internal server error.');
+                } else {
+                    setAuthStatus('error');
+                    console.error('Authentication failed. Status:', response.status);
+                }
+            }
+        } catch (error) {
+            setAuthStatus('error');
+            console.error('Error handling backend authentication:', error);
+        }
+    };
+
+    const buttonText =
+        authStatus === 'loading'
+            ? 'Loading...'
+            : authStatus === 'authenticated'
+                ? 'Authenticated'
+                : 'Se connecter avec Google';
+
+    const buttonStyle =
+        authStatus === 'loading'
+            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+            : 'bg-gray-500 hover:bg-gray-700 text-white';
+
     const handleTogglePassword = () => {
         setShowPassword(!showPassword);
     };
 
-    const responseGoogle = async (response) => {
-        console.log(response)
-    };
     return (
         <div className="flex flex-grow items-center justify-center bg-black ">
             <div className="w-1/2 p-8 max-w-md">
@@ -112,16 +183,6 @@ const Login = () => {
                         className="flex bg-green-500 text-white justify-center px-4 py-2 rounded focus:outline-none hover:bg-green-700 mx-auto my-auto">
                         Log in
                     </button>
-                    <div className="flex justify-center mt-4 px-4 py-2 rounded">
-                        <GoogleLogin
-                            clientId="302654438584-p2f35qo1q9l5fl5amjeiejkufl0otija.apps.googleusercontent.com"
-                            buttonText="Login with Google"
-                            redirect_uri="http://localhost:3000/api/users/auth/google/initiate?authType=signin"
-                            onSuccess={responseGoogle}
-                            onFailure={responseGoogle}
-                            cookiePolicy={'single_host_origin'}
-                        />
-                    </div>
                     <p className="mt-6 text-center text-sm text-gray-500">
                         Not a member?{' '}
                         <Link to="/signup" className="font-semibold leading-6 text-green-600 hover:text-green-500">
@@ -129,6 +190,12 @@ const Login = () => {
                         </Link>
                     </p>
                 </form>
+                <div className="flex flex-row justify-center mt-4 px-4 py-2 rounded">
+                    <button onClick={handleClick} className={`font-bold py-2 px-4 rounded ${buttonStyle}`}>
+                        <FontAwesomeIcon icon={faGoogle} className="mr-2" />
+                        {buttonText}
+                    </button>
+                </div>
             </div>
         </div>
     );
