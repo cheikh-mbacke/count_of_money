@@ -3,6 +3,7 @@ const { register } = require("./authentification/register");
 const { handleGoogleLogin } = require("./authentification/handleGoogleLogin");
 const { handleGoogleSignup } = require("./authentification/handleGoogleSignup");
 const { initiateGoogleAuth } = require("./authentification/initiateGoogleAuth");
+const { getUserProfile, updateUserProfile } = require("./userInfo/userInfo");
 const createAdminAccount = require("./authentification/createAdmin");
 
 module.exports = {
@@ -11,5 +12,7 @@ module.exports = {
   handleGoogleLogin,
   handleGoogleSignup,
   initiateGoogleAuth,
+  getUserProfile,
+  updateUserProfile,
   createAdminAccount,
 };

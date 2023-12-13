@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
     }
 
     const newUser = await authHelper.createUser(
-      { email, name: pseudo, password },
+      { email, pseudo, password },
       transaction
     );
 
