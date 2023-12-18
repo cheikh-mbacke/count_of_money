@@ -30,7 +30,7 @@ const Login = () => {
             try {
                 const user = await userService.Login(values);
                 dispatch(login(user));
-                navigate("/profile");
+                navigate("/dashbord");
             } catch (error) {
                 console.error('Error logging in:', error);
             }
@@ -38,7 +38,7 @@ const Login = () => {
     });
 
     const handleClick = () => {
-        window.location.href = 'http://localhost:3001/api/users/auth/google/initiate?authType=signin'
+        window.location.href = 'http://localhost:3000/api/users/auth/google/initiate?authType=signin'
     };
 
     const handleTogglePassword = () => {

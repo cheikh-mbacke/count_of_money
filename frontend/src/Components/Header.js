@@ -1,23 +1,37 @@
 // Header.js
-import React, { useEffect, Fragment } from 'react';
+import React, {useEffect, Fragment, useState} from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
 import { logout } from '../Actions/authActions';
 import Logo from "../Assets/Images/logo11.png"
 import { Menu, Transition } from '@headlessui/react'
 const Header = () => {
-    const user = useSelector((state) => state.auth.user);
+    const userRedux = useSelector((state) => state.auth.user);
+    const [user, setUser] = useState({});
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-    dispatch(logout())
+        localStorage.removeItem('user');
+        dispatch(logout());
     };
 
     useEffect(() => {
-    }, []);
+        // Récupérer l'utilisateur depuis le stockage local lors du chargement de la page
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            setUser(storedUser);
+        } else {
+            setUser(userRedux);
+        }
+    }, [userRedux]);
+
+    useEffect(() => {
+        // Mettre à jour le stockage local lorsque l'utilisateur change
+        localStorage.setItem('user', JSON.stringify(user));
+    }, [user]);
 
     function classNames(...classes) {
-        return classes.filter(Boolean).join(' ')
+        return classes.filter(Boolean).join(' ');
     }
 
     return (
@@ -84,6 +98,15 @@ const Header = () => {
                                                     className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                 >
                                                     Your Profile
+                                                </NavLink>
+                                            )}
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            {({ active }) => (
+                                                <NavLink to="/dashbord"
+                                                         className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                                                >
+                                                    DashBoard
                                                 </NavLink>
                                             )}
                                         </Menu.Item>

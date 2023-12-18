@@ -8,6 +8,7 @@ import {Link, useNavigate} from "react-router-dom";
 import crypto from "../Assets/Images/cryptocurrancy.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGoogle} from "@fortawesome/free-brands-svg-icons";
+import {data} from "autoprefixer";
 
 const Signup = () => {
     const navigate = useNavigate()
@@ -34,14 +35,13 @@ const Signup = () => {
         validationSchema: validationSchema,
         onSubmit: async (values) => {
             const {confirmPassword, ...registrationData} = values;
-            // Replace the alert with your actual registration logic
-            const response = await userService.Register(registrationData)
+            await userService.Register(registrationData).then()
             navigate("/login")
         },
     });
 
-    const handleClick = () => {
-        window.location.href = 'http://localhost:3000/api/users/auth/google/initiate?authType=signup';
+    const handleClick = async () => {
+        window.location.href = 'http://localhost:3000/api/users/auth/google/initiate?authType=signup'
     };
 
     return (
