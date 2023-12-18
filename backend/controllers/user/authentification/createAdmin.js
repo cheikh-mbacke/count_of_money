@@ -15,9 +15,9 @@ const createAdminAccount = async () => {
 
     await authHelper.createUser({
       email: adminEmail,
-      name: adminPseudo,
+      pseudo: adminPseudo,
       password: adminPassword,
-      role: "admin",
+      roleName: "admin",
     });
     console.log("Compte administrateur créé avec succès");
   } catch (error) {

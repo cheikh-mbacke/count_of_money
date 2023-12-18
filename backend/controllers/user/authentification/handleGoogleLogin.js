@@ -15,25 +15,28 @@ exports.handleGoogleLogin = async (req, res) => {
     const user = await authHelper.findUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({
-        message: "Échec de l'authentification : identifiants invalides.",
-        user: user,
-      });
+      return res
+          .status(401)
+          .cookie("message", "Échec de l'authentification : identifiants invalides.")
+          .cookie("user", JSON.stringify(user))
+          .redirect("http://localhost:3001/login");
     }
 
     const roleName = await authHelper.getUserRole(user.id);
     const token = authHelper.generateToken(user.id, roleName);
 
-    res.status(200).json({
-      message: "Connexion réussie.",
-      userId: user.id,
-      role: roleName,
-      token: token,
-    });
+    res
+        .status(200)
+        .cookie('token', token, { httpOnly: true })
+        .cookie('userId', user.id.toString())
+        .cookie('role', roleName)
+        .redirect('http://localhost:3001/dashbord');
   } catch (e) {
     console.log(e)
-    res.status(500).json({
-      message: "Une erreur s'est produite lors du traitement de la demande.",
-    });
+    res
+        .status(500)
+        .redirect("http://localhost:3001/login")
+        .cookie("message", "Une erreur s'est produite lors du traitement de la demande.",
+    );
   }
 };

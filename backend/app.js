@@ -29,7 +29,7 @@ app.use("/api/users/auth", authRoutes);
 
 // Synchronisation de la base de données
 sequelize
-  .sync()
+  .sync()//{force:true} pour generer la BD dès le début
   .then(async () => {
     console.log("Database synced");
     try {

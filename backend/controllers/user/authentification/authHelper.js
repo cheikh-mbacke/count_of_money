@@ -34,7 +34,7 @@ class AuthHelper {
     );
   }
 
-  async createUser({ email, pseudo, password }, transaction = null) {
+  async createUser({ email, pseudo, password, roleName }, transaction = null) {
     try {
       const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
       const options = transaction ? { transaction } : {};
@@ -46,7 +46,7 @@ class AuthHelper {
         },
         options
       );
-      await this.assignDefaultRole(newUser.id, "user", transaction);
+      await this.assignDefaultRole(newUser.id, roleName, transaction);
       return newUser;
     } catch (error) {
       throw new Error(error);
