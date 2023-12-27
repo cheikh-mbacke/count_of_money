@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 import axios from "axios";
 import Coinitem from "./Coinitem";
 import Coin from "./Coin";
+import {useSelector} from "react-redux";
 
 
 const Dashbord = () => {
@@ -23,12 +24,10 @@ const Dashbord = () => {
 
     return(
         <div className="flex-grow bg-black">
-            <Link to="/dashbord">
                 <div className="flex items-center justify-center">
                     <FontAwesomeIcon icon={faCoins} className="text-green-500 text-3xl"/>
                     <h1 className="text-white">Your <span className="text-green-500">DashBoard</span></h1>
                 </div>
-            </Link>
             
             <div className="max-w-7xl m-auto text-white">
                 <div>

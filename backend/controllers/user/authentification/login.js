@@ -31,9 +31,11 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       message: "Connexion réussie.",
+      pseudo: user.pseudo,
       userId: user.id,
       roleName: roleName,
       token: token,
+      email: user.email
     });
   } catch (error) {
     res

@@ -1,34 +1,40 @@
-// Header.js
-import React, {useEffect, Fragment, useState} from 'react';
+import React, {useEffect, Fragment} from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import { logout } from '../Actions/authActions';
+import {login, logout } from '../Actions/authActions';
 import Logo from "../Assets/Images/logo11.png"
 import { Menu, Transition } from '@headlessui/react'
+import Cookies from 'js-cookie'
+
 const Header = () => {
-    const userRedux = useSelector((state) => state.auth.user);
-    const [user, setUser] = useState({});
+    const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        Cookies.remove('user');
+        Cookies.remove('userLogin');
         dispatch(logout());
     };
 
-    useEffect(() => {
-        // Récupérer l'utilisateur depuis le stockage local lors du chargement de la page
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) {
-            setUser(storedUser);
-        } else {
-            setUser(userRedux);
-        }
-    }, [userRedux]);
+     useEffect(()=> {
+         try {
+             const cookieGoogle = Cookies.get('user')
+             const cookieLogin = Cookies.get('userLogin')
 
-    useEffect(() => {
-        // Mettre à jour le stockage local lorsque l'utilisateur change
-        localStorage.setItem('user', JSON.stringify(user));
-    }, [user]);
+             if (cookieGoogle){
+                 const userJSON = decodeURIComponent(cookieGoogle);
+                 const storedUserCookie = JSON.parse(userJSON);
+                 dispatch(login(storedUserCookie))
+             } else if (cookieLogin){
+                 const userJSON = decodeURIComponent(cookieLogin);
+                 const storedUserCookie = JSON.parse(userJSON);
+                 dispatch(login(storedUserCookie))
+             }
+         }catch (error) {
+             console.error('Error parsing user data:', error);
+         }
+
+     }, [])
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
