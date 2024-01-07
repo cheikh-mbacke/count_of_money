@@ -34,7 +34,7 @@ const Header = () => {
              console.error('Error parsing user data:', error);
          }
 
-     }, [])
+     }, [dispatch])
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
@@ -42,26 +42,26 @@ const Header = () => {
 
     return (
         <header className="bg-gradient-to-br from-green-400 via-black to-black">
-            <div className="container mx-auto flex items-center justify-between">
+            <div className="container mx-auto flex items-center justify-between flex-wrap">
                 <div className="flex items-center">
                     <Link to="/">
-                        <img src={Logo} alt="logo-site" className="w-20 h-20" />
+                        <img src={Logo} alt="logo-site" className="w-10 md:w-20 h-10 md:h-20 ml-4" />
                     </Link>
                 </div>
 
-                <div className="flex space-x-6 w-1/2">
-                    <NavLink to="/" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                <div className="flex justify-center space-x-2 md:space-x-6 w-1/2">
+                    <NavLink to="/" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         Home
                     </NavLink>
-                    <NavLink to="/about" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/about" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         About Us
                     </NavLink>
-                    <NavLink to="/contact" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/contact" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         Contact Us
                     </NavLink>
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 mr-4">
                     {!user ? (
                         <>
                             <NavLink to="/login" className="text-xl text-white px-4 py-2 transition duration-300">

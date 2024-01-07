@@ -18,13 +18,18 @@ const Coin = () => {
             .catch((error) => {
                 console.log(error)
             })
-    }, [])
+    }, [url])
 
     return (
         <div className="flex-grow bg-black text-white">
             <NavLink to="/dashbord">
                 <FontAwesomeIcon icon={faArrowLeft}  className="m-5 text-green-300"/>
             </NavLink>
+
+            <NavLink to={`/trade/${coin.id}`}>
+                <button className="block md:hidden mx-auto justify-center bg-gray-800 shadow-lg shadow-green-500 text-white py-2 px-4 rounded-lg mt-4">Trade</button>
+            </NavLink>
+
             <div className="max-w-3xl my-4 mx-auto py-3 px-4 flex flex-col">
                 <div className="max-w-3xl my-4 py-3 px-4 flex flex-col items-center bg-gray-800 shadow-lg shadow-green-500 rounded-lg">
                     <h1>{coin.name}</h1>
@@ -54,9 +59,9 @@ const Coin = () => {
                         <div className="flex items-center justify-center">
                             {
                                 coin.market_data ?
-                                    <h1>{
+                                    <h1>${
                                         coin.market_data.current_price ?
-                                            coin.market_data.current_price.usd
+                                            coin.market_data.current_price.usd.toLocaleString()
                                             :
                                             null
                                     }
@@ -87,42 +92,42 @@ const Coin = () => {
                                     <>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_1h_in_currency ?
-                                                coin.market_data.price_change_percentage_1h_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_1h_in_currency.usd.toFixed(2).toLocaleString()
                                                 :
                                                 null
-                                        }</td>
+                                        }%</td>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_24h_in_currency ?
-                                                coin.market_data.price_change_percentage_24h_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_24h_in_currency.usd.toFixed(2).toLocaleString()
                                                 :
                                                 null
-                                        }</td>
+                                        }%</td>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_7d_in_currency ?
-                                                coin.market_data.price_change_percentage_7d_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_7d_in_currency.usd.toFixed(2).toLocaleString()
                                                 :
                                                 null
-                                        }</td>
+                                        }%</td>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_14d_in_currency ?
-                                                coin.market_data.price_change_percentage_14d_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_14d_in_currency.usd.toFixed(2).toLocaleString()
                                                 :
                                                 null
-                                        }</td>
+                                        }%</td>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_30d_in_currency ?
-                                                coin.market_data.price_change_percentage_30d_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_30d_in_currency.usd.toFixed(2).toLocaleString()
                                                 :
                                                 null
 
-                                        }</td>
+                                        }%</td>
                                         <td className="p-1 md:p-2 text-center">{
                                             coin.market_data.price_change_percentage_1y_in_currency ?
-                                                coin.market_data.price_change_percentage_1y_in_currency.usd.toLocaleString()
+                                                coin.market_data.price_change_percentage_1y_in_currency.usd.toFixed(1).toLocaleString()
                                                 :
                                                 null
 
-                                        }</td>
+                                        }%</td>
                                     </>
                                     :
                                     null
@@ -142,7 +147,7 @@ const Coin = () => {
                                             <h4>24 Hours Low</h4>
                                             {
                                                 coin.market_data.low_24h ?
-                                                    <p className="text-green-300">{coin.market_data.low_24h.usd.toLocaleString()}</p>
+                                                    <p className="text-green-300">$ {coin.market_data.low_24h.usd.toLocaleString()}</p>
                                                     :
                                                     null
                                             }
@@ -151,7 +156,7 @@ const Coin = () => {
                                             <h4>24 Hour High</h4>
                                             {
                                                 coin.market_data.high_24h ?
-                                                    <p className="text-green-300">{coin.market_data.high_24h.usd.toLocaleString()}</p>
+                                                    <p className="text-green-300">$ {coin.market_data.high_24h.usd.toLocaleString()}</p>
                                                     :
                                                     null
                                             }
@@ -162,7 +167,7 @@ const Coin = () => {
                                             <h4>Market Cap</h4>
                                             {
                                                 coin.market_data.market_cap ?
-                                                    <p className="text-green-300">{coin.market_data.market_cap.usd.toLocaleString()}</p>
+                                                    <p className="text-green-300">$ {coin.market_data.market_cap.usd.toLocaleString()}</p>
                                                     :
                                                     null
                                             }
