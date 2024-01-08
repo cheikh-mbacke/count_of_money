@@ -43,7 +43,7 @@ const Profile = () => {
         {name: "ethereum", amount: "2.3"},
         {name: "cardano", amount: "56"},
         {name: "ripple", amount: "22"},
-        {name: "usdt", amount: "100"},
+        {name: "tether", amount: "100"},
     ];
 
     return (
@@ -51,22 +51,24 @@ const Profile = () => {
             <style>
                 {`
     .user-info {
-        background-color: #333; /* Fond plus sombre pour les informations de l'utilisateur */
-        padding: 1rem; /* Espacement interne */
-        border-radius: 0.5rem; /* Bords arrondis */
+        background-color: #121212; /* Fond sombre pour un meilleur effet néon */
+        border-radius: 15px; /* Coins arrondis */
+        padding: 20px; /* Espacement interne */
+        box-shadow: 0 0 10px #32cd32, 0 0 20px #32cd32, 0 0 30px #32cd32; /* Effet néon */
         margin-bottom: 2rem; /* Espacement avec les éléments suivants */
+        color: #fff; /* Texte blanc */
     }
     .user-info p {
         color: #ccc; /* Couleur de texte plus claire pour les informations de l'utilisateur */
         margin-bottom: 0.5rem; /* Espacement entre les lignes */
     }
-    .crypto-wallet table {
-        background-color: black; /* Fond en noir */
-        color: white; /* Texte en blanc */
-        width: 100%;
-        margin-top: 1rem;
-        border-collapse: collapse;
-    }
+.crypto-wallet table {
+    border-radius: 15px; /* Coins arrondis */
+    overflow: hidden; /* Permet de masquer les débordements et de garder les coins arrondis */
+    border: 3px solid #32cd32; /* Bordure solide de couleur néon */
+    box-shadow: 0 0 10px #32cd32, 0 0 20px #32cd32, 0 0 30px #32cd32; /* Effet néon */
+    margin: 0 auto; /* Centrer le tableau */
+}
     .crypto-wallet thead tr {
         background-color: #16a34a;
     }
