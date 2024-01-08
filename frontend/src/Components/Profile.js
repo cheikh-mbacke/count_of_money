@@ -1,23 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {useSelector} from "react-redux";
 
 const Profile = () => {
-    const [user, setUser] = useState({})
-
-    useEffect(() => {
-        const userLocal = JSON.parse(localStorage.getItem('user'));
-        console.log(userLocal)
-        if (userLocal) {
-            setUser(userLocal);
-        } else {
-            setUser(null);
-        }
-    }, []);
-
+    const user = useSelector((state) => state.auth.user);
     return (
-        <div className=" flex-grow bg-black">
-            <p className="text-white"> pseudo : {user.userId}</p>
-            <p className="text-white"> Role : {user.role ? user.role.roleName : ""}</p>
+        <div className=" flex-grow bg-black text-white">
+            {
+                user ?
+                    <>
+                        <p>{user.userId}</p>
+                        <p>{user.pseudo}</p>
+                        <p>{user.email}</p>
+                    </>
+                    :
+                    null
+            }
         </div>
     );
 };

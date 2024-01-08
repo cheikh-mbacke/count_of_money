@@ -24,12 +24,21 @@ exports.handleGoogleLogin = async (req, res) => {
 
     const roleName = await authHelper.getUserRole(user.id);
     const token = authHelper.generateToken(user.id, roleName);
+    const us = {
+      message: 'Connexion réussie',
+      pseudo: user.pseudo,
+      roleName: roleName.roleName,
+      token: token,
+      userId: user.id,
+      email: user.email
+    }
+
+    const userJSON = JSON.stringify(us);
+    const userEncoded = encodeURIComponent(userJSON)
 
     res
         .status(200)
-        .cookie('token', token, { httpOnly: true })
-        .cookie('userId', user.id.toString())
-        .cookie('role', roleName)
+        .cookie("user", userEncoded)
         .redirect('http://localhost:3001/dashbord');
   } catch (e) {
     console.log(e)

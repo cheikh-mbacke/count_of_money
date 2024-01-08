@@ -9,6 +9,8 @@ import {Link, useNavigate} from "react-router-dom";
 import crypto from "../Assets/Images/cryptocurrancy.png"
 import {login} from "../Actions/authActions";
 import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie'
+
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -29,7 +31,9 @@ const Login = () => {
         onSubmit: async (values) => {
             try {
                 const user = await userService.Login(values);
-                dispatch(login(user));
+                dispatch(login(user))
+                const cookieLogin = encodeURIComponent(JSON.stringify(user))
+                Cookies.set('userLogin', cookieLogin);
                 navigate("/dashbord");
             } catch (error) {
                 console.error('Error logging in:', error);

@@ -1,34 +1,40 @@
-// Header.js
-import React, {useEffect, Fragment, useState} from 'react';
+import React, {useEffect, Fragment} from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import { logout } from '../Actions/authActions';
+import {login, logout } from '../Actions/authActions';
 import Logo from "../Assets/Images/logo11.png"
 import { Menu, Transition } from '@headlessui/react'
+import Cookies from 'js-cookie'
+
 const Header = () => {
-    const userRedux = useSelector((state) => state.auth.user);
-    const [user, setUser] = useState({});
+    const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        Cookies.remove('user');
+        Cookies.remove('userLogin');
         dispatch(logout());
     };
 
-    useEffect(() => {
-        // Récupérer l'utilisateur depuis le stockage local lors du chargement de la page
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) {
-            setUser(storedUser);
-        } else {
-            setUser(userRedux);
-        }
-    }, [userRedux]);
+     useEffect(()=> {
+         try {
+             const cookieGoogle = Cookies.get('user')
+             const cookieLogin = Cookies.get('userLogin')
 
-    useEffect(() => {
-        // Mettre à jour le stockage local lorsque l'utilisateur change
-        localStorage.setItem('user', JSON.stringify(user));
-    }, [user]);
+             if (cookieGoogle){
+                 const userJSON = decodeURIComponent(cookieGoogle);
+                 const storedUserCookie = JSON.parse(userJSON);
+                 dispatch(login(storedUserCookie))
+             } else if (cookieLogin){
+                 const userJSON = decodeURIComponent(cookieLogin);
+                 const storedUserCookie = JSON.parse(userJSON);
+                 dispatch(login(storedUserCookie))
+             }
+         }catch (error) {
+             console.error('Error parsing user data:', error);
+         }
+
+     }, [dispatch])
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
@@ -36,26 +42,26 @@ const Header = () => {
 
     return (
         <header className="bg-gradient-to-br from-green-400 via-black to-black">
-            <div className="container mx-auto flex items-center justify-between">
+            <div className="container mx-auto flex items-center justify-between flex-wrap">
                 <div className="flex items-center">
                     <Link to="/">
-                        <img src={Logo} alt="logo-site" className="w-20 h-20" />
+                        <img src={Logo} alt="logo-site" className="w-10 md:w-20 h-10 md:h-20 ml-4" />
                     </Link>
                 </div>
 
-                <div className="flex space-x-6 w-1/2">
-                    <NavLink to="/" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                <div className="flex justify-center space-x-2 md:space-x-6 w-1/2">
+                    <NavLink to="/" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         Home
                     </NavLink>
-                    <NavLink to="/about" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/about" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         About Us
                     </NavLink>
-                    <NavLink to="/contact" className="text-white text-xl font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/contact" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
                         Contact Us
                     </NavLink>
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 mr-4">
                     {!user ? (
                         <>
                             <NavLink to="/login" className="text-xl text-white px-4 py-2 transition duration-300">

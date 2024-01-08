@@ -1,5 +1,4 @@
 // RegisterForm.js
-
 import React from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -8,7 +7,6 @@ import {Link, useNavigate} from "react-router-dom";
 import crypto from "../Assets/Images/cryptocurrancy.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGoogle} from "@fortawesome/free-brands-svg-icons";
-import {data} from "autoprefixer";
 
 const Signup = () => {
     const navigate = useNavigate()
