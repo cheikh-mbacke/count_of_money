@@ -27,5 +27,3 @@ services:
     container_name: express-app
     ports:
       - "3000:3000"
-    depends_on:
-      - mysql
