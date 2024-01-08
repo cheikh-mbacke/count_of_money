@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, {useState, useEffect} from "react";
+import {useParams, Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faChartLine, faChartSimple} from "@fortawesome/free-solid-svg-icons";
 import CandlestickChart from "./CandlestickChart";
 import LineChart from "./LineChart";
@@ -9,6 +9,7 @@ import axios from "axios";
 
 const Trade = () => {
     const params = useParams();
+    const [coin, setCoin] = useState({})
     const [loading, setLoading] = useState(false);
     const [chartData, setChartData] = useState([]);
     const [selectedCurrency, setSelectedCurrency] = useState("usd");
@@ -16,6 +17,11 @@ const Trade = () => {
     const [selectedOhlcDays, setSelectedOhlcDays] = useState(14);
     const [selectedMarketDays, setSelectedMarketDays] = useState(30);
     const [selectedLineDataType, setSelectedLineDataType] = useState("prices");
+    const [quantity, setQuantity] = useState(0);
+    const [totalCost, setTotalCost] = useState(0);
+
+    const url = `https://api.coingecko.com/api/v3/coins/${params.coinId}`
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -65,8 +71,15 @@ const Trade = () => {
             }
         };
 
+        axios.get(url)
+            .then((response) => {
+                setCoin(response.data)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
         fetchData();
-    }, [params.coinId, selectedCurrency, selectedChartType, selectedOhlcDays, selectedMarketDays, selectedLineDataType]);
+    }, [url, params.coinId, selectedCurrency, selectedChartType, selectedOhlcDays, selectedMarketDays, selectedLineDataType]);
 
     const handleCurrencyChange = (event) => {
         setSelectedCurrency(event.target.value);
@@ -87,14 +100,51 @@ const Trade = () => {
     const handleLineDataTypeChange = (type) => {
         setSelectedLineDataType(type);
     };
+    const handleQuantityChange = (event) => {
+        const newQuantity = Number(event.target.value);
+        setQuantity(newQuantity);
+
+        // Mettez à jour le coût total lorsque la quantité change
+        const currentPrice = coin.market_data?.current_price?.usd;
+        const newTotalCost = newQuantity * currentPrice;
+        setTotalCost(newTotalCost);
+    };
+
+    const handleBuySell = (action) => {
+        // Mettez en œuvre la logique d'achat ou de vente ici, en utilisant l'état de la quantité
+        // et d'autres informations nécessaires.
+
+        // Exemple simple:
+        if (action === 'buy') {
+            console.log(`Achat de ${quantity} ${params.coinId} pour un coût total de ${totalCost} ${selectedCurrency}`);
+        } else if (action === 'sell') {
+            console.log(`Vente de ${quantity} ${params.coinId} pour un coût total de ${totalCost} ${selectedCurrency}`);
+        }
+    };
 
     return (
         <div className="flex-grow bg-black">
-            <LoaderComponent loading={loading} />
+            <LoaderComponent loading={loading}/>
 
             <Link to="/dashbord" className="m-5 text-green-300">
-                <FontAwesomeIcon icon={faArrowLeft} />
+                <FontAwesomeIcon icon={faArrowLeft}/>
             </Link>
+
+            <div className="flex justify-center space-x-3 pb-8">
+                {
+                    coin.image ?
+                        <img src={coin.image.small} alt=""/>
+                        :
+                        null
+                }
+                <h1 className="text-white text-2xl font-bold mb-4">{
+                    coin.name ?
+                        coin.id.toUpperCase()
+                        :
+                        null
+                }
+                </h1>
+            </div>
 
             <div className="flex items-center justify-center space-x-4 m-4">
                 <div className="grid md:flex items-center space-y-1 md:space-x-2 mr-4">
@@ -102,13 +152,13 @@ const Trade = () => {
                         className={`cursor-pointer mr-2 ${selectedChartType === "candlestick" ? "text-white" : "text-gray-500"}`}
                         onClick={() => handleChartTypeChange("candlestick")}
                     >
-                        <FontAwesomeIcon icon={faChartSimple} size="2x" />
+                        <FontAwesomeIcon icon={faChartSimple} size="2x"/>
                     </div>
                     <div
                         className={`cursor-pointer ${selectedChartType === "line" ? "text-white" : "text-gray-500"}`}
                         onClick={() => handleChartTypeChange("line")}
                     >
-                        <FontAwesomeIcon icon={faChartLine} size="2x" />
+                        <FontAwesomeIcon icon={faChartLine} size="2x"/>
                     </div>
                 </div>
 
@@ -144,6 +194,7 @@ const Trade = () => {
                             <input
                                 className="text-black"
                                 type="number"
+                                style={{ width: "50px" }}
                                 value={selectedMarketDays}
                                 onChange={handleMarketDaysChange}
                             />
@@ -152,7 +203,9 @@ const Trade = () => {
                         <div>
                             <label className="text-white mr-4">
                                 Line Data Type:
-                                <select value={selectedLineDataType} onChange={(e) => handleLineDataTypeChange(e.target.value)} className="text-black">
+                                <select value={selectedLineDataType}
+                                        onChange={(e) => handleLineDataTypeChange(e.target.value)}
+                                        className="text-black">
                                     <option value="prices">Prices</option>
                                     <option value="market_caps">Market Caps</option>
                                     <option value="total_volumes">Total Volumes</option>
@@ -167,8 +220,52 @@ const Trade = () => {
                 {selectedChartType === "candlestick" ? (
                     <CandlestickChart data={chartData}/>
                 ) : (
-                    <LineChart data={chartData} />
+                    <LineChart data={chartData}/>
                 )}
+            </div>
+
+            <div className="flex flex-col items-center justify-center">
+
+                <div>
+                    <p className="text-white mr-4">
+                        Coût par unité :
+                        {
+                            coin.market_data?.current_price ?
+                                coin.market_data.current_price.usd.toLocaleString()
+                                :
+                                null
+                        } { selectedCurrency.toUpperCase()}
+
+                    </p>
+                </div>
+
+                <div className="justify-between space-x-3 p-4">
+                    <label className="text-white mr-4">
+                        Quantité:
+                        <input
+                            className="text-black"
+                            type="number"
+                            style={{ width: "50px" }}
+                            value={quantity}
+                            onChange={handleQuantityChange}
+                        />
+                    </label>
+
+                    <label className="text-white mr-4">
+                        Coût total:
+                        <span
+                            className="text-white">{totalCost.toLocaleString()} {selectedCurrency.toUpperCase()}</span>
+                    </label>
+                </div>
+
+                <div className="justify-between space-x-3">
+                    <button onClick={() => handleBuySell('buy')} className="bg-green-500 text-white p-2 rounded">
+                        Acheter
+                    </button>
+                    <button onClick={() => handleBuySell('sell')} className="bg-red-500 text-white p-2 rounded">
+                        Vendre
+                    </button>
+                </div>
             </div>
         </div>
     );
