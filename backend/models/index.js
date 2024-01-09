@@ -12,12 +12,13 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
-const [User, Role] = require("./user.js")(sequelize, Sequelize);
+const [User, Role, InvalidToken] = require("./user.js")(sequelize, Sequelize);
 const db = {
   Sequelize: Sequelize,
   sequelize: sequelize,
   User: User,
   Role: Role,
+  InvalidToken: InvalidToken
 };
 
 module.exports = db;

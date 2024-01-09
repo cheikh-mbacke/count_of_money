@@ -26,7 +26,7 @@ class AuthHelper {
 
   generateToken(userId, roleName) {
     return jwt.sign(
-      { userId: userId, role: roleName },
+      { userId: userId, roleName: roleName },
       process.env.JWT_SECRET,
       {
         expiresIn: "24h",
@@ -79,6 +79,19 @@ class AuthHelper {
       throw new Error(error);
     }
   }
+
+  async invalidateToken(jti, expiration, userId) {
+    try {
+      await db.InvalidToken.create({
+        jti: jti,
+        expiration: new Date(expiration * 1000),
+        userId: userId
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
 }
 
 module.exports = AuthHelper;

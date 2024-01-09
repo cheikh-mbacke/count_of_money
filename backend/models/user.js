@@ -27,8 +27,26 @@ module.exports = (sequelize, Sequelize) => {
     },
   });
 
+  const InvalidToken = sequelize.define("InvalidToken", {
+    jti: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true
+    },
+    expiration: {
+      type: Sequelize.DATE,
+      allowNull: false
+    },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    }
+  });
+
   User.hasMany(Role, { foreignKey: "userId" });
   Role.belongsTo(User, { foreignKey: "userId" });
+  InvalidToken.belongsTo(sequelize.models.User, { foreignKey: "userId" });
+  sequelize.models.User.hasMany(InvalidToken, { foreignKey: "userId" });
 
-  return [User, Role];
+  return [User, Role, InvalidToken];
 };

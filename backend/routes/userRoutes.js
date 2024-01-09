@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   login,
+  logout,
   register,
   handleGoogleLogin,
   handleGoogleSignup,
@@ -13,6 +14,7 @@ const auth = require("../middlewares/auth");
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/logout", auth, logout);
 router.get("/google/initiate", initiateGoogleAuth);
 router.get("/google/signup/callback", handleGoogleSignup);
 router.get("/google/login/callback", handleGoogleLogin);

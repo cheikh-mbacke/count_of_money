@@ -1,4 +1,4 @@
-const { login } = require("./authentification/login");
+const { login, logout } = require("./authentification/login");
 const { register } = require("./authentification/register");
 const { handleGoogleLogin } = require("./authentification/handleGoogleLogin");
 const { handleGoogleSignup } = require("./authentification/handleGoogleSignup");
@@ -8,6 +8,7 @@ const createAdminAccount = require("./authentification/createAdmin");
 
 module.exports = {
   login,
+  logout,
   register,
   handleGoogleLogin,
   handleGoogleSignup,
