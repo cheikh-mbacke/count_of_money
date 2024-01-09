@@ -19,7 +19,7 @@ exports.getUserProfile = async (req, res) => {
           attributes: ["roleName"],
         },
       ],
-      attributes: ["id", "pseudo", "email"],
+      attributes: ["id", "pseudo", "email", "currency", "preferredCryptocurrencies", "pressReviewKeywords"],
     });
 
     if (!user) {
@@ -31,6 +31,9 @@ exports.getUserProfile = async (req, res) => {
       pseudo: user.pseudo,
       email: user.email,
       roleName: user.Roles && user.Roles.length > 0 ? user.Roles[0].roleName : null,
+      currency: user.currency,
+      preferredCryptocurrencies: user.preferredCryptocurrencies,
+      pressReviewKeywords: user.pressReviewKeywords
     };
 
     res.status(200).json(transformedUser);
@@ -44,37 +47,43 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
+
+
 exports.updateUserProfile = async (req, res) => {
   try {
     const userId = req.body.userId;
 
-    if (!userId) {
-      throw new Error("ID utilisateur manquant.");
-    }
-
     const user = await User.findByPk(userId);
-
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
-    const { pseudo, email, password } = req.body;
+    const { 
+      pseudo,
+      email,
+      password,
+      currency,
+      preferredCryptocurrencies,
+      pressReviewKeywords
+    } = req.body;
 
     if (pseudo) user.pseudo = pseudo;
     if (email) user.email = email;
-
+    if (currency) user.currency = currency;
+    if (preferredCryptocurrencies) user.preferredCryptocurrencies = preferredCryptocurrencies;
+    if (pressReviewKeywords) user.pressReviewKeywords = pressReviewKeywords;
     if (password) {
       user.password = await bcrypt.hash(password, 10);
     }
-
     await user.save();
 
     res.status(200).json({ message: "Profil mis à jour avec succès." });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors du traitement de la demande.",
+      message: "Une erreur s'est produite lors du traitement de la demande."
     });
   }
 };
+
 
