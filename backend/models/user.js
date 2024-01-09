@@ -14,6 +14,18 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       allowNull: true,
     },
+    currency: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    preferredCryptocurrencies: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    }, 
+    pressReviewKeywords: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
   });
 
   const Role = sequelize.define("Role", {
@@ -43,10 +55,12 @@ module.exports = (sequelize, Sequelize) => {
     }
   });
 
+
   User.hasMany(Role, { foreignKey: "userId" });
   Role.belongsTo(User, { foreignKey: "userId" });
   InvalidToken.belongsTo(sequelize.models.User, { foreignKey: "userId" });
   sequelize.models.User.hasMany(InvalidToken, { foreignKey: "userId" });
+
 
   return [User, Role, InvalidToken];
 };
