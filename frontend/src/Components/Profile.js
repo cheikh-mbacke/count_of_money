@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useSelector} from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from "react-redux";
 import axios from 'axios';
 
 const Profile = () => {
@@ -7,8 +7,6 @@ const Profile = () => {
     const [cryptoPrices, setCryptoPrices] = useState({});
     const [totalCryptoValueInEuros, setTotalCryptoValueInEuros] = useState(0);
 
-    // Le taux de conversion de USD à EUR pour cet exemple est fictif.
-    // Dans une application réelle, vous voudriez obtenir ce taux via une API de taux de change.
     const conversionRateUSDToEUR = 0.9;
 
     useEffect(() => {
@@ -22,12 +20,10 @@ const Profile = () => {
                 });
                 setCryptoPrices(prices);
 
-                // Calculer le total en USD
                 userWallet.forEach(crypto => {
                     totalValueUSD += (crypto.amount * (prices[crypto.name] || 0));
                 });
 
-                // Convertir le total en EUR
                 setTotalCryptoValueInEuros(Math.round(totalValueUSD * conversionRateUSDToEUR));
             } catch (error) {
                 console.error("Erreur lors de la récupération des prix des cryptomonnaies", error);
@@ -37,93 +33,51 @@ const Profile = () => {
         getCryptoPrices();
     }, []);
 
-    // Ici, vous pourriez avoir une liste de crypto-monnaies que l'utilisateur détient
     const userWallet = [
-        {name: "bitcoin", amount: "0.5"},
-        {name: "ethereum", amount: "2.3"},
-        {name: "cardano", amount: "56"},
-        {name: "ripple", amount: "22"},
-        {name: "tether", amount: "100"},
+        { name: "bitcoin", amount: "0.5" },
+        { name: "ethereum", amount: "2.3" },
+        { name: "cardano", amount: "56" },
+        { name: "ripple", amount: "22" },
+        { name: "tether", amount: "100" },
     ];
 
     return (
-        <>
-            <style>
-                {`
-    .user-info {
-        background-color: #121212; /* Fond sombre pour un meilleur effet néon */
-        border-radius: 15px; /* Coins arrondis */
-        padding: 20px; /* Espacement interne */
-        box-shadow: 0 0 10px #32cd32, 0 0 20px #32cd32, 0 0 30px #32cd32; /* Effet néon */
-        margin-bottom: 2rem; /* Espacement avec les éléments suivants */
-        color: #fff; /* Texte blanc */
-    }
-    .user-info p {
-        color: #ccc; /* Couleur de texte plus claire pour les informations de l'utilisateur */
-        margin-bottom: 0.5rem; /* Espacement entre les lignes */
-    }
-.crypto-wallet table {
-    border-radius: 15px; /* Coins arrondis */
-    overflow: hidden; /* Permet de masquer les débordements et de garder les coins arrondis */
-    border: 3px solid #32cd32; /* Bordure solide de couleur néon */
-    box-shadow: 0 0 10px #32cd32, 0 0 20px #32cd32, 0 0 30px #32cd32; /* Effet néon */
-    margin: 0 auto; /* Centrer le tableau */
-}
-    .crypto-wallet thead tr {
-        background-color: #16a34a;
-    }
-    .crypto-wallet tbody tr {
-        background-color: black; /* Fond des lignes en noir */
-    }
-    .crypto-wallet tbody tr td {
-        color: white; /* Texte des lignes en blanc */
-    }
-    .crypto-wallet th, .crypto-wallet td {
-        border: 1px solid #ddd;
-        text-align: left;
-        padding: 8px;
-    }
-    `}
-            </style>
-
-            <div className="flex-grow bg-black text-white p-4">
-                {
-                    user ?
-                        <>
-                            <div className="user-info mb-4">
-                                <p>ID Utilisateur: {user.userId}</p>
-                                <p>Pseudo: {user.pseudo}</p>
-                                <p>Email: {user.email}</p>
-                                <p>Soldes: 30458€</p>
-                                <p>Soldes crypto : {totalCryptoValueInEuros}€</p>
-                            </div>
-                            <div className="crypto-wallet">
-                                <h3 className="mb-2">Portefeuille Crypto</h3>
-                                <table>
-                                    <thead>
-                                    <tr>
-                                        <th>Crypto</th>
-                                        <th>Quantité</th>
-                                        <th>Valeur Actuelle (USD)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {userWallet.map((crypto, index) => (
-                                        <tr key={index}>
-                                            <td>{crypto.name.charAt(0).toUpperCase() + crypto.name.slice(1)}</td>
-                                            <td>{crypto.amount}</td>
-                                            <td>${crypto.amount * (cryptoPrices[crypto.name] || 0)}</td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </>
-                        :
-                        <p>Aucun utilisateur connecté</p>
-                }
-            </div>
-        </>
+        <div className="flex-grow bg-black text-white p-4">
+            {user ? (
+                <>
+                    <div className="bg-[#121212] rounded-3xl p-5 shadow-neon mb-8">
+                        <p className="text-[#ccc] mb-2">ID Utilisateur: {user.userId}</p>
+                        <p className="text-[#ccc] mb-2">Pseudo: {user.pseudo}</p>
+                        <p className="text-[#ccc] mb-2">Email: {user.email}</p>
+                        <p className="text-[#ccc] mb-2">Soldes: 30458€</p>
+                        <p className="text-[#ccc] mb-2">Soldes crypto : {totalCryptoValueInEuros}€</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center">
+                        <h3 className="mb-4 text-2xl font-bold text-neon">Portefeuille Crypto</h3>
+                        <table className="mt-4 rounded-3xl overflow-hidden border-3 border-neon shadow-neon mx-auto">
+                            <thead className="bg-green-700">
+                            <tr>
+                                <th className="px-4 py-2">Crypto</th>
+                                <th className="px-4 py-2">Quantité</th>
+                                <th className="px-4 py-2">Valeur Actuelle (USD)</th>
+                            </tr>
+                            </thead>
+                            <tbody className="bg-black text-white">
+                            {userWallet.map((crypto, index) => (
+                                <tr key={index}>
+                                    <td className="px-4 py-2">{crypto.name.charAt(0).toUpperCase() + crypto.name.slice(1)}</td>
+                                    <td className="px-4 py-2">{crypto.amount}</td>
+                                    <td className="px-4 py-2">${crypto.amount * (cryptoPrices[crypto.name] || 0)}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </>
+            ) : (
+                <p>Aucun utilisateur connecté</p>
+            )}
+        </div>
     );
 };
 
