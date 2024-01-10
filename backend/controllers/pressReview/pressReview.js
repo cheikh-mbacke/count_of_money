@@ -1,20 +1,25 @@
 const db = require("../../models");
 const User = db.User;
 
+const NodeCache = require('node-cache');
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+
 const axios = require('axios');
 
 const NEWS_API_KEY = 'ed19741278c94d5abca36ca5f44a123a';
 
 const getArticles = async (req, res) => {
+    const userId = req.body.userId;
+    const userKeywords = userId ? await getUserKeywords(userId) : '';
+    const searchQuery = userKeywords ? `cryptocurrency ${userKeywords}` : 'cryptocurrency';
+    const key = `articles-${searchQuery}`;
+    const cachedData = myCache.get(key);
+
+    if (cachedData) {
+        return res.status(200).json(cachedData);
+    }
+
     try {
-        // Récupérer l'utilisateur connecté (ou un profil anonyme)
-        const userId = req.body.userId;
-        const userKeywords = userId ? await getUserKeywords(userId) : '';
-
-        // Construire la chaîne de recherche avec les mots-clés de l'utilisateur
-        const searchQuery = userKeywords ? `cryptocurrency ${userKeywords}` : 'cryptocurrency';
-
-        // Paramètres pour NewsAPI
         const params = {
             q: searchQuery,
             apiKey: NEWS_API_KEY
@@ -22,9 +27,9 @@ const getArticles = async (req, res) => {
 
         const response = await axios.get('https://newsapi.org/v2/everything', { params });
 
-        // Vérifiez la réponse et extrayez les articles
         if (response.data && response.data.articles) {
             const articles = response.data.articles;
+            myCache.set(key, articles, 7200); // Mise en cache pour 2 heures
             res.status(200).json(articles);
         } else {
             res.status(404).json({ message: "Aucun article trouvé" });
