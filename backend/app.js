@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const swaggerUi = require("swagger-ui-express");
 const authRoutes = require("./routes/userRoutes");
 const cryptoRoutes = require("./routes/cryptoRoutes");
+const pressReviewRoutes = require("./routes/pressReviewRoutes");
 const swaggerSpec = require("./config/swagger");
 const { sequelize } = require("./models");
 const corsMiddleware = require("./middlewares/cors");
@@ -28,6 +29,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/users/", authRoutes);
 app.use("/api/users/auth", authRoutes);
 app.use("/api/cryptos", cryptoRoutes);
+app.use("/api/articles", pressReviewRoutes);
+
 
 
 // Synchronisation de la base de données
