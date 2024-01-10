@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
     "nconf": "^0.12.1",
+    "node-cache": "^5.1.2",
     "nodemon": "^3.0.1",
     "open": "^8.4.2",
     "sequelize": "^6.35.1",
