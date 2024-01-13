@@ -6,6 +6,38 @@ const axios = require('axios');
 const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
+const getAdminCryptoList = async (req, res) => {
+
+  const key = `cryptoList_default_admin`;
+  const cachedData = myCache.get(key);
+
+  if (cachedData) {
+    return res.status(200).json(cachedData);
+  }
+
+  try {
+    const response = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets",
+      {
+        params: {
+          vs_currency: 'eur',
+          order: "market_cap_desc",
+          per_page: 100,
+          page: 1,
+          sparkline: false,
+        },
+      }
+    );
+
+    myCache.set(key, response.data, 3600); // Mise en cache pour 1 heure
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données crypto", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération de la liste des crypto-monnaies",
+    });
+  }
+};
 
 const getCryptoList = async (req, res) => {
   const { userId } = req;
@@ -216,7 +248,8 @@ const deleteCrypto = async (req, res) => {
     }
 };
 
-module.exports = { 
+module.exports = {
+  getAdminCryptoList,
     getCryptoList, 
     getCryptoDetails,
     getCryptoHistory,
