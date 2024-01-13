@@ -21,8 +21,10 @@ const getArticles = async (req, res) => {
 
     try {
         const params = {
-            q: searchQuery,
-            apiKey: NEWS_API_KEY
+          q: searchQuery,
+          apiKey: NEWS_API_KEY,
+          pageSize: 10,
+          sortBy: "publishedAt",
         };
 
         const response = await axios.get('https://newsapi.org/v2/everything', { params });
