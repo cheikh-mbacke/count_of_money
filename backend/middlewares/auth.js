@@ -29,6 +29,6 @@ module.exports = async (req, res, next) => {
       next();
     }
   } catch (error) {
-    res.status(401).json({message: 'Accès refusé'});
+    res.status(401).json({message: 'Accès refusé' +error});
   }
 };
