@@ -2,9 +2,17 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
 const adminMiddleware = require("../middlewares/admin");
-const { getCryptoList, getCryptoDetails, getCryptoHistory, addCrypto, deleteCrypto } = require("../controllers/crypto/cryptoAPI");
+const {
+  getAdminCryptoList,
+  getCryptoList,
+  getCryptoDetails,
+  getCryptoHistory,
+  addCrypto,
+  deleteCrypto,
+} = require("../controllers/crypto/cryptoAPI");
 
 router.get("/", getCryptoList);
+router.get("/admin", auth, adminMiddleware, getAdminCryptoList);
 router.get('/:id', auth, getCryptoDetails);
 router.get('/:id/history/:period', auth, getCryptoHistory);
 

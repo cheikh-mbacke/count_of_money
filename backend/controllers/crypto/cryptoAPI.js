@@ -1,46 +1,109 @@
 const db = require("../../models");
 const CryptoSelection = db.CryptoSelection;
+const User = db.User;
 const axios = require('axios');
 
 const NodeCache = require('node-cache');
 const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
+const getAdminCryptoList = async (req, res) => {
+
+  const key = `cryptoList_default_admin`;
+  const cachedData = myCache.get(key);
+
+  if (cachedData) {
+    return res.status(200).json(cachedData);
+  }
+
+  try {
+    const response = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets",
+      {
+        params: {
+          vs_currency: 'eur',
+          order: "market_cap_desc",
+          per_page: 100,
+          page: 1,
+          sparkline: false,
+        },
+      }
+    );
+
+    myCache.set(key, response.data, 3600); // Mise en cache pour 1 heure
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données crypto", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération de la liste des crypto-monnaies",
+    });
+  }
+};
+
 const getCryptoList = async (req, res) => {
-    const key = 'cryptoList';
-    const cachedData = myCache.get(key);
+  const { userId } = req;
+  let userCurrency = "eur"; 
 
-    if (cachedData) {
-        return res.status(200).json(cachedData);
-    }
-
+  if (userId) {
     try {
-        // Récupérer les identifiants des crypto-monnaies depuis la base de données
-        const selectedCryptos = await CryptoSelection.findAll({
-            attributes: ['cryptoId']
-        });
-        const ids = selectedCryptos.map(c => c.cryptoId).join(',');
+      const user = await User.findOne({
+        where: { id: userId },
+        attributes: ["currency"],
+      });
 
-        // Vérifier si des identifiants sont présents
-        if (ids.length === 0) {
-            return res.status(200).json({ message: "Aucune crypto-monnaie sélectionnée" });
-        }
-
-        const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets', {
-            params: {
-                vs_currency: 'eur',
-                ids: ids,
-                order: 'market_cap_desc',
-                per_page: ids.split(',').length,
-                page: 1,
-                sparkline: false
-            }
-        });
-
-        myCache.set(key, response.data, 3600); // Mise en cache pour 1 heure
-        res.status(200).json(response.data);
+      if (user && user.currency) {
+        userCurrency = user.currency;
+      }
     } catch (error) {
-        res.status(500).json({message: "Erreur lors de la récupération de la liste des crypto-monnaies"});
+        throw error;
     }
+  }
+
+  const key = userId
+    ? `cryptoList_${userId}_${userCurrency}`
+    : `cryptoList_default_${userCurrency}`;
+  const cachedData = myCache.get(key);
+
+  if (cachedData) {
+    return res.status(200).json(cachedData);
+  }
+
+  try {
+    const selectedCryptos = await CryptoSelection.findAll({
+      attributes: ["cryptoId"],
+    });
+    const ids = selectedCryptos.map((c) => c.cryptoId).join(",");
+
+    if (ids.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "Aucune crypto-monnaie sélectionnée" });
+    }
+
+    const response = await axios.get(
+      "https://api.coingecko.com/api/v3/coins/markets",
+      {
+        params: {
+          vs_currency: userCurrency,
+          ids: ids,
+          order: "market_cap_desc",
+          per_page: ids.split(",").length,
+          page: 1,
+          sparkline: false,
+        },
+      }
+    );
+
+    myCache.set(key, response.data, 3600); // Mise en cache pour 1 heure
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des données crypto", error);
+    res
+      .status(500)
+      .json({
+        message:
+          "Erreur lors de la récupération de la liste des crypto-monnaies",
+      });
+  }
 };
 
 
@@ -71,36 +134,62 @@ const getCryptoDetails = async (req, res) => {
 
 
 const getCryptoHistory = async (req, res) => {
-    const cryptoId = req.params.id;
-    const period = req.params.period;
-    const key = `cryptoHistory-${cryptoId}-${period}`;
-    const cachedData = myCache.get(key);
+  const { userId } = req;
+  let userCurrency = "eur";
 
-    if (cachedData) {
-        return res.status(200).json(cachedData);
-    }
-
+  if (userId) {
     try {
-        let params = {
-            vs_currency: 'eur',
-            days: '1' // Valeur par défaut pour la période maximale
-        };
+      const user = await User.findOne({
+        where: { id: userId },
+        attributes: ["currency"],
+      });
 
-        // Ajustement des jours en fonction de la période
-        if (period === 'daily') {
-            params.days = '60'; // Les 60 derniers jours
-        } else if (period === 'hourly') {
-            params.days = '2'; // Les 48 dernières heures
-        } else {
-            throw new Error('Période non prise en charge');
-        }
-
-        const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart`, { params });
-        myCache.set(key, response.data, 86400); // Mise en cache pour 1 jour
-        res.status(200).json(response.data);
+      if (user && user.currency) {
+        userCurrency = user.currency;
+      }
     } catch (error) {
-        res.status(500).send({message: error.message || "Erreur lors de la récupération de l'historique des prix"});
+      throw error;
     }
+  }
+  const cryptoId = req.params.id;
+  const period = req.params.period;
+  const key = `cryptoHistory-${cryptoId}-${period}`;
+  const cachedData = myCache.get(key);
+
+  if (cachedData) {
+    return res.status(200).json(cachedData);
+  }
+
+  try {
+    let params = {
+      vs_currency: userCurrency,
+      days: "1", // Valeur par défaut pour la période maximale
+    };
+
+    // Ajustement des jours en fonction de la période
+    if (period === "daily") {
+      params.days = "60"; // Les 60 derniers jours
+    } else if (period === "hourly") {
+      params.days = "2"; // Les 48 dernières heures
+    } else {
+      throw new Error("Période non prise en charge");
+    }
+
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart`,
+      { params }
+    );
+    myCache.set(key, response.data, 86400); // Mise en cache pour 1 jour
+    res.status(200).json(response.data);
+  } catch (error) {
+    res
+      .status(500)
+      .send({
+        message:
+          error.message ||
+          "Erreur lors de la récupération de l'historique des prix",
+      });
+  }
 };
 
 
@@ -159,7 +248,8 @@ const deleteCrypto = async (req, res) => {
     }
 };
 
-module.exports = { 
+module.exports = {
+  getAdminCryptoList,
     getCryptoList, 
     getCryptoDetails,
     getCryptoHistory,
