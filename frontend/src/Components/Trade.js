@@ -6,6 +6,7 @@ import CandlestickChart from "./CandlestickChart";
 import LineChart from "./LineChart";
 import LoaderComponent from "./LoaderComponent";
 import axios from "axios";
+import cryptoService from "../Actions/Crypto";
 
 const Trade = () => {
     const params = useParams();
@@ -15,69 +16,73 @@ const Trade = () => {
     const [selectedCurrency, setSelectedCurrency] = useState("usd");
     const [selectedChartType, setSelectedChartType] = useState("candlestick");
     const [selectedOhlcDays, setSelectedOhlcDays] = useState(14);
-    const [selectedMarketDays, setSelectedMarketDays] = useState(30);
+    const [selectedMarketDays, setSelectedMarketDays] = useState("daily");
     const [selectedLineDataType, setSelectedLineDataType] = useState("prices");
     const [quantity, setQuantity] = useState(0);
     const [totalCost, setTotalCost] = useState(0);
 
     const url = `https://api.coingecko.com/api/v3/coins/${params.coinId}`
-
-
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                let apiEndpoint;
-                if (selectedChartType === "candlestick") {
-                    apiEndpoint = `https://api.coingecko.com/api/v3/coins/${params.coinId}/ohlc?vs_currency=${selectedCurrency}&days=${selectedOhlcDays}`;
-                } else {
-                    apiEndpoint = `https://api.coingecko.com/api/v3/coins/${params.coinId}/market_chart?vs_currency=${selectedCurrency}&days=${selectedMarketDays}`;
-                }
+                let response;
+                let chartRawData;
 
-                const response = await axios.get(apiEndpoint);
-                const data = await response.data;
-
-                // Réinitialisez les données à chaque changement de type de graphique
-                setChartData([]);
+                // Fetch coin data
+                const coinResponse = await axios.get(url);
+                setCoin(coinResponse.data);
 
                 if (selectedChartType === "candlestick") {
-                    setChartData(data);
+                    const apiEndpoint = `https://api.coingecko.com/api/v3/coins/${params.coinId}/ohlc?vs_currency=${selectedCurrency}&days=${selectedOhlcDays}`;
+                    response = await axios.get(apiEndpoint);
+                    chartRawData = response.data;
+
+                    setChartData(chartRawData);
                 } else {
-                    // Choix de la propriété de données pour le graphique en ligne
-                    if (selectedLineDataType === "prices") {
-                        const formattedPrices = data.prices.map(priceData => ({
-                            y: parseFloat(priceData[1]).toFixed(2),
-                            x: priceData[0]
-                        }));
-                        setChartData(formattedPrices);
-                    } else if (selectedLineDataType === "market_caps") {
-                        const formattedMarketCaps = data.market_caps.map(marketCapData => ({
-                            y: parseFloat(marketCapData[1]).toFixed(2),
-                            x: marketCapData[0]
-                        }));
-                        setChartData(formattedMarketCaps);
-                    } else if (selectedLineDataType === "total_volumes") {
-                        const formattedTotalVolumes = data.total_volumes.map(totalVolumeData => ({
-                            y: parseFloat(totalVolumeData[1]).toFixed(2),
-                            x: totalVolumeData[0]
-                        }));
-                        setChartData(formattedTotalVolumes);
+                    await cryptoService.getCryptoHistory(params.coinId, selectedMarketDays)
+                        .then((res) => {
+                            chartRawData = res
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+
+                    let formattedData = [];
+                    switch (selectedLineDataType) {
+                        case "prices":
+                            formattedData = chartRawData.prices.map(priceData => ({
+                                y: parseFloat(priceData[1]).toFixed(2),
+                                x: priceData[0]
+                            }));
+                            break;
+                        case "market_caps":
+                            formattedData = chartRawData.market_caps.map(marketCapData => ({
+                                y: parseFloat(marketCapData[1]).toFixed(2),
+                                x: marketCapData[0]
+                            }));
+                            break;
+                        case "total_volumes":
+                            formattedData = chartRawData.total_volumes.map(totalVolumeData => ({
+                                y: parseFloat(totalVolumeData[1]).toFixed(2),
+                                x: totalVolumeData[0]
+                            }));
+                            break;
+                        default:
+                        // Vous pouvez gérer les cas par défaut si nécessaire
+                            formattedData = []
                     }
+
+                    setChartData(formattedData);
                 }
-                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setLoading(true);
+            } finally {
+                setLoading(false); // Définir loading sur false dans tous les cas
             }
         };
 
-        axios.get(url)
-            .then((response) => {
-                setCoin(response.data)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
         fetchData();
     }, [url, params.coinId, selectedCurrency, selectedChartType, selectedOhlcDays, selectedMarketDays, selectedLineDataType]);
 
@@ -94,7 +99,7 @@ const Trade = () => {
     };
 
     const handleMarketDaysChange = (event) => {
-        setSelectedMarketDays(Number(event.target.value));
+        setSelectedMarketDays(event.target.value);
     };
 
     const handleLineDataTypeChange = (type) => {
@@ -191,13 +196,15 @@ const Trade = () => {
                     <div className="grid space-y-1 md:flex items-center justify-between">
                         <label className="text-white mr-4">
                             Number of Days (market):
-                            <input
+                            <select
                                 className="text-black"
-                                type="number"
-                                style={{ width: "50px" }}
                                 value={selectedMarketDays}
                                 onChange={handleMarketDaysChange}
-                            />
+                                style={{ width: "60px" }}
+                            >
+                                <option value="daily">daily</option>
+                                <option value="hourly">hourly</option>
+                            </select>
                         </label>
 
                         <div>

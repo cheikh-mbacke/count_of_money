@@ -11,6 +11,7 @@ import Profile from "./Components/Profile";
 import Dashbord from "./Components/Dashbord";
 import Coin from "./Components/Coin";
 import Trade from "./Components/Trade";
+import ArticlesList from "./Components/ArticlesList";
 
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
                         <Route path=":coinId" element={<Trade/>} />
                     </Route>
                     <Route path="/profile" element={<Profile/>} />
+                    <Route path="/articles" element={<ArticlesList />} />
                 </Routes>
             <Footer/>
             </div>

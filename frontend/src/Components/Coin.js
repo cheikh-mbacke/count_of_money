@@ -1,33 +1,29 @@
 import React, {useEffect, useState} from "react";
 import {NavLink, useParams} from "react-router-dom";
-import axios from "axios";
 import DOMPurify from "dompurify"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import cryptoService from "../Actions/Crypto";
 
 const Coin = () => {
     const params = useParams()
     const [coin, setCoin] = useState({})
-    const url = `https://api.coingecko.com/api/v3/coins/${params.coinId}`
 
-    useEffect(() => {
-        axios.get(url)
+
+    useEffect( () => {
+         cryptoService.getCryptoDetails(params.coinId)
             .then((response) => {
-                setCoin(response.data)
+                setCoin(response)
             })
             .catch((error) => {
                 console.log(error)
             })
-    }, [url])
+    }, [params.coinId])
 
     return (
         <div className="flex-grow bg-black text-white">
             <NavLink to="/dashbord">
                 <FontAwesomeIcon icon={faArrowLeft}  className="m-5 text-green-300"/>
-            </NavLink>
-
-            <NavLink to={`/trade/${coin.id}`}>
-                <button className="block md:hidden mx-auto justify-center bg-gray-800 shadow-lg shadow-green-500 text-white py-2 px-4 rounded-lg mt-4">Trade</button>
             </NavLink>
 
             <div className="max-w-3xl my-4 mx-auto py-3 px-4 flex flex-col">

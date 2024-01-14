@@ -1,52 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCoins, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import Coinitem from "./Coinitem";
-import Coin from "./Coin";
 import LoaderComponent from "./LoaderComponent";
+import cryptoService from "../Actions/Crypto";
+import {useSelector} from "react-redux";
+
 
 const Dashboard = () => {
+    const user = useSelector((state) => state.auth.user);
     const [coins, setCoins] = useState([]);
     const [filteredCoins, setFilteredCoins] = useState([]);
     const [search, setSearch] = useState("");
-    const [selectedPagination, setSelectedPagination] = useState(1);
     const [loading, setLoading] = useState(false);
-    const itemsPerPage = 10;
+    const itemsPerPage = 100;
 
     useEffect(() => {
-        setLoading(true);
-        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${itemsPerPage}&page=${selectedPagination}&sparkline=false&locale=en`;
-
-        axios
-            .get(url)
-            .then((response) => {
-                setCoins(response.data);
-                setLoading(false);
-            })
-            .catch((error) => {
+        const fetchData = async () => {
+            console.log(user)
+            setLoading(true);
+            try {
+                if (user && user.roleName === "admin") {
+                    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${itemsPerPage}&page=1&sparkline=false&locale=en`;
+                    const response = await axios.get(url);
+                    setCoins(response.data);
+                    setLoading(false);
+                } else {
+                    const response = await cryptoService.getCryptoList();
+                    setCoins(response);
+                    setLoading(false);
+                }
+            } catch (error) {
                 console.log(error);
                 setLoading(true);
-            });
-    }, [selectedPagination]);
+            }
+        };
+        if (user){
+            fetchData();
+        }
+    }, [user]);
+
+
 
     useEffect(() => {
-        setFilteredCoins(coins);
-    }, [coins]);
+        const filterCoins = () => {
+            const searchTerm = search.toLowerCase();
+            return coins.filter(
+                (coin) => coin.symbol.toLowerCase().includes(searchTerm) || coin.name.toLowerCase().includes(searchTerm)
+            );
+        };
+        setFilteredCoins(filterCoins);
+    }, [coins, search]);
 
     const handleSearch = (event) => {
-        const searchTerm = event.target.value.toLowerCase();
-        const filteredResults = coins.filter(
-            (coin) => coin.symbol.toLowerCase().includes(searchTerm) || coin.name.toLowerCase().includes(searchTerm)
-        );
-        setFilteredCoins(filteredResults);
-        setSearch(searchTerm);
+        setSearch(event.target.value);
     };
 
-    const changePaginationSet = (paginationSet) => {
-        setSelectedPagination(paginationSet);
-    };
 
     return (
         <div className="flex-grow bg-black">
@@ -73,34 +83,20 @@ const Dashboard = () => {
 
                 <div>
                     <div className="flex justify-between items-center bg-gray-800 shadow-lg shadow-green-500 rounded-lg m-8 p-4 font-bold">
-                        <p>#</p>
+                        <p>FAV</p>
                         <p className="ml-[-4rem]">Coins</p>
                         <p>Price</p>
-                        <p>24h</p>
+                        <p className="hidden md:block">24h</p>
                         <p className="hidden md:block">Volume</p>
                         <p className="hidden md:block">Market Cap</p>
-                        <p className="hidden md:block">Actions</p>
+                        <p>Actions</p>
                     </div>
 
                     {filteredCoins.map((coin) => (
-                        <Link to={`/coin/${coin.id}`} element={<Coin />} key={coin.id}>
+                        <div>
                             <Coinitem coins={coin} />
-                        </Link>
+                        </div>
                     ))}
-
-                    <div className="flex justify-center items-center">
-                        {Array.from({ length: filteredCoins.length }).map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => changePaginationSet(index + 1)}
-                                className={`mx-1 px-3 py-2 rounded-md ${
-                                    selectedPagination === index + 1 ? "bg-gray-600" : "bg-gray-800"
-                                } text-white hover:bg-gray-600`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-                    </div>
                 </div>
             </div>
         </div>
