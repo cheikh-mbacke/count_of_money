@@ -1,40 +1,47 @@
 import React, {useEffect, Fragment} from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, logout } from '../Actions/authActions';
+import {login, logout} from '../Actions/authActions';
 import Logo from "../Assets/Images/logo11.png"
-import { Menu, Transition } from '@headlessui/react'
+import {Menu, Transition} from '@headlessui/react'
 import Cookies from 'js-cookie'
+import userService from "../Actions/User";
 
 const Header = () => {
     const user = useSelector((state) => state.auth.user);
     const dispatch = useDispatch();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await userService.Logout({
+            userId: user.userId,
+            roleName: user.roleName
+        })
         Cookies.remove('user');
         Cookies.remove('userLogin');
+        Cookies.remove('JWT')
+        Cookies.remove('message')
         dispatch(logout());
     };
 
-     useEffect(()=> {
-         try {
-             const cookieGoogle = Cookies.get('user')
-             const cookieLogin = Cookies.get('userLogin')
+    useEffect(() => {
+        try {
+            const cookieGoogle = Cookies.get('user')
+            const cookieLogin = Cookies.get('userLogin')
 
-             if (cookieGoogle){
-                 const userJSON = decodeURIComponent(cookieGoogle);
-                 const storedUserCookie = JSON.parse(userJSON);
-                 dispatch(login(storedUserCookie))
-             } else if (cookieLogin){
-                 const userJSON = decodeURIComponent(cookieLogin);
-                 const storedUserCookie = JSON.parse(userJSON);
-                 dispatch(login(storedUserCookie))
-             }
-         }catch (error) {
-             console.error('Error parsing user data:', error);
-         }
+            if (cookieGoogle) {
+                const userJSON = decodeURIComponent(cookieGoogle);
+                const storedUserCookie = JSON.parse(userJSON);
+                dispatch(login(storedUserCookie))
+            } else if (cookieLogin) {
+                const userJSON = decodeURIComponent(cookieLogin);
+                const storedUserCookie = JSON.parse(userJSON);
+                dispatch(login(storedUserCookie))
+            }
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+        }
 
-     }, [dispatch])
+    }, [dispatch])
 
     function classNames(...classes) {
         return classes.filter(Boolean).join(' ');
@@ -45,20 +52,41 @@ const Header = () => {
             <div className="container mx-auto flex items-center justify-between flex-wrap">
                 <div className="flex items-center">
                     <Link to="/">
-                        <img src={Logo} alt="logo-site" className="w-10 md:w-20 h-10 md:h-20 ml-4" />
+                        <img src={Logo} alt="logo-site" className="w-10 md:w-20 h-10 md:h-20 ml-4"/>
                     </Link>
                 </div>
 
                 <div className="flex justify-center space-x-2 md:space-x-6 w-1/2">
-                    <NavLink to="/" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                             activeClassName="underline">
                         Home
                     </NavLink>
-                    <NavLink to="/about" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/about" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                             activeClassName="underline">
                         About Us
                     </NavLink>
-                    <NavLink to="/contact" className="text-white md:text-xl md:font-bold font-serif mx-4" activeClassName="underline">
+                    <NavLink to="/contact" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                             activeClassName="underline">
                         Contact Us
                     </NavLink>
+                    {
+                        !user ?
+                            <NavLink to="/dashbord" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                                     activeClassName="underline">
+                                Market
+                            </NavLink>
+                            :
+                            null
+                    }
+                    {
+                        !user ?
+                            <NavLink to="/articles" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                                     activeClassName="underline">
+                                Articles
+                            </NavLink>
+                            :
+                            null
+                    }
                 </div>
 
                 <div className="flex space-x-4 mr-4">
@@ -78,8 +106,9 @@ const Header = () => {
                         <>
                             <Menu as="div" className="relative ml-3">
                                 <div>
-                                    <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                                        <span className="absolute -inset-1.5" />
+                                    <Menu.Button
+                                        className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                        <span className="absolute -inset-1.5"/>
                                         <span className="sr-only text-white">Open user menu</span>
                                         <img
                                             className="h-8 w-8 rounded-full"
@@ -97,29 +126,39 @@ const Header = () => {
                                     leaveFrom="transform opacity-100 scale-100"
                                     leaveTo="transform opacity-0 scale-95"
                                 >
-                                    <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                                    <Menu.Items
+                                        className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                                         <Menu.Item>
-                                            {({ active }) => (
+                                            {({active}) => (
                                                 <NavLink to="/profile"
-                                                    className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                                                         className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                 >
                                                     Your Profile
                                                 </NavLink>
                                             )}
                                         </Menu.Item>
                                         <Menu.Item>
-                                            {({ active }) => (
+                                            {({active}) => (
                                                 <NavLink to="/dashbord"
                                                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                 >
-                                                    DashBoard
+                                                    Market
                                                 </NavLink>
                                             )}
                                         </Menu.Item>
                                         <Menu.Item>
-                                            {({ active }) => (
+                                            {({active}) => (
+                                                <NavLink to="/articles"
+                                                         className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+                                                >
+                                                    Articles
+                                                </NavLink>
+                                            )}
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            {({active}) => (
                                                 <NavLink to="/login"
-                                                    onClick={handleLogout}
+                                                         onClick={handleLogout}
                                                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                 >
                                                     Sign out

@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from "react-redux";
+import React, {useEffect, useState} from 'react';
+import {useSelector} from "react-redux";
 import axios from 'axios';
+import userService from "../Actions/User";
 
 const Profile = () => {
     const user = useSelector((state) => state.auth.user);
+    console.log(user)
     const [cryptoPrices, setCryptoPrices] = useState({});
     const [totalCryptoValueInEuros, setTotalCryptoValueInEuros] = useState(0);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editProfile, setEditProfile] = useState({
+        pseudo: "",
+        email: "",
+    });
+    console.log(editProfile)
 
     const conversionRateUSDToEUR = 0.9;
 
     useEffect(() => {
+        if (user) {
+            setEditProfile({
+                pseudo: user.pseudo,
+                email: user.email,
+            });
+        }
         const getCryptoPrices = async () => {
             try {
                 const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
@@ -33,25 +47,94 @@ const Profile = () => {
         getCryptoPrices();
     }, []);
 
+    const handleEditChange = (e) => {
+        setEditProfile({...editProfile, [e.target.name]: e.target.value});
+    };
+
+    const submitEditProfile = async () => {
+        try {
+            const payload = {
+                userId: user.userId,
+                ...editProfile
+            }
+            console.log(payload)
+            await userService.updateUserProfile(payload)
+            setIsEditing(false);
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du profil :', error);
+        }
+    };
+
+
     const userWallet = [
-        { name: "bitcoin", amount: "0.5" },
-        { name: "ethereum", amount: "2.3" },
-        { name: "cardano", amount: "56" },
-        { name: "ripple", amount: "22" },
-        { name: "tether", amount: "100" },
+        {name: "bitcoin", amount: "0.5"},
+        {name: "ethereum", amount: "2.3"},
+        {name: "cardano", amount: "56"},
+        {name: "ripple", amount: "22"},
+        {name: "tether", amount: "100"},
     ];
 
     return (
         <div className="flex-grow bg-black text-white p-4">
             {user ? (
                 <>
-                    <div className="bg-[#121212] rounded-3xl p-5 shadow-neon mb-8">
-                        <p className="text-[#ccc] mb-2">ID Utilisateur: {user.userId}</p>
-                        <p className="text-[#ccc] mb-2">Pseudo: {user.pseudo}</p>
-                        <p className="text-[#ccc] mb-2">Email: {user.email}</p>
-                        <p className="text-[#ccc] mb-2">Soldes: 30458€</p>
-                        <p className="text-[#ccc] mb-2">Soldes crypto : {totalCryptoValueInEuros}€</p>
+                    <div>
+                        <div className="flex items-center bg-[#121212] rounded-3xl p-5 shadow-neon mb-8">
+                            <div className="flex flex-col w-1/2">
+                                <p className="text-[#ccc] mb-2">ID Utilisateur: {user.userId}</p>
+                                <p className="text-[#ccc] mb-2">Pseudo: {user.pseudo}</p>
+                                <p className="text-[#ccc] mb-2">Email: {user.email}</p>
+                                <p className="text-[#ccc] mb-2">Soldes: 30458€</p>
+                                <p className="text-[#ccc] mb-2">Soldes crypto : {totalCryptoValueInEuros}€</p>
+                            </div>
+                            {isEditing ? (
+                                <div className="flex flex-col space-y-2">
+                                    <label>
+                                        pseudo :
+                                        <input
+                                            className="text-black "
+                                            type="text"
+                                            name="pseudo"
+                                            value={editProfile.pseudo}
+                                            onChange={handleEditChange}
+                                        />
+                                    </label>
+                                    <label>
+                                        email:
+                                        <input
+                                            className="text-black ml-5"
+                                            type="email"
+                                            name="email"
+                                            value={editProfile.email}
+                                            onChange={handleEditChange}
+                                        />
+                                    </label>
+
+                                    <button
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                                        onClick={submitEditProfile}>
+                                        Valider
+                                    </button>
+                                    <button
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                        onClick={() => setIsEditing(false)}>
+                                        Annuler
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className="flex flex-col">
+                                    Voulez-vous modifer le pseudo et l'email ?
+                                    <button
+                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                        onClick={() => setIsEditing(true)}>
+                                        Modifier
+                                    </button>
+                                </label>
+
+                            )}
+                        </div>
                     </div>
+
                     <div className="flex flex-col items-center justify-center">
                         <h3 className="mb-4 text-2xl font-bold text-neon">Portefeuille Crypto</h3>
                         <table className="mt-4 rounded-3xl overflow-hidden border-3 border-neon shadow-neon mx-auto">

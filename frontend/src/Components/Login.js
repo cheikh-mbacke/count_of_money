@@ -33,6 +33,7 @@ const Login = () => {
                 const user = await userService.Login(values);
                 dispatch(login(user))
                 const cookieLogin = encodeURIComponent(JSON.stringify(user))
+                Cookies.set('JWT', user.token)
                 Cookies.set('userLogin', cookieLogin);
                 navigate("/dashbord");
             } catch (error) {
