@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import Article from "./Article";
-import { useSelector } from "react-redux";
+import {useSelector} from "react-redux";
 import newsService from "../Actions/Articles";
 
 const ArticlesList = () => {
@@ -16,10 +16,18 @@ const ArticlesList = () => {
         const fetchArticles = async () => {
             setLoading(true);
             try {
-                const response = await newsService.getArticles(user.userId);
-                setArticles(response);
-                setTotalPages(Math.ceil(response.length / articlesPerPage));
-                setError("");
+                if (user) {
+                    const response = await newsService.getArticles(user.userId);
+                    setArticles(response);
+                    setTotalPages(Math.ceil(response.length / articlesPerPage));
+                    setError("");
+                } else {
+                    const response = await newsService.getArticles(1);
+                    setArticles(response);
+                    setTotalPages(Math.ceil(response.length / articlesPerPage));
+                    setError("");
+                }
+
             } catch (error) {
                 console.error("Erreur lors de la récupération des articles", error);
                 setError("Erreur lors de la récupération des articles");
@@ -27,10 +35,7 @@ const ArticlesList = () => {
                 setLoading(false);
             }
         };
-
-        if (user) {
-            fetchArticles();
-        }
+        fetchArticles();
     }, [user]);
 
     const indexOfLastArticle = currentPage * articlesPerPage;
@@ -42,7 +47,7 @@ const ArticlesList = () => {
     return (
         <div className="flex-grow bg-black text-white">
             <div className="flex justify-center mt-8">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                {Array.from({length: totalPages}, (_, i) => i + 1).map(pageNumber => (
                     <button
                         key={pageNumber}
                         onClick={() => paginate(pageNumber)}

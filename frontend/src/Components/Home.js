@@ -6,7 +6,7 @@ const Home = () => {
         <div className="flex flex-grow flex-col items-center justify-center bg-black text-white p-6">
             <div className="text-center text-5xl font-serif mb-6">
                 <span className="text-green-500">Trade</span>
-                <span className="">a</span>
+                <span className=""> </span>
                 <span className="text-white">Crypto Better</span>
             </div>
 

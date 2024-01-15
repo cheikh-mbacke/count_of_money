@@ -12,6 +12,7 @@ import Dashbord from "./Components/Dashbord";
 import Coin from "./Components/Coin";
 import Trade from "./Components/Trade";
 import ArticlesList from "./Components/ArticlesList";
+import NonConnect from "./Components/NonConnect";
 
 
 const App = () => {
@@ -34,6 +35,7 @@ const App = () => {
                     </Route>
                     <Route path="/profile" element={<Profile/>} />
                     <Route path="/articles" element={<ArticlesList />} />
+                    <Route path="/unauth" element={<NonConnect />} />
                 </Routes>
             <Footer/>
             </div>

@@ -4,6 +4,19 @@ import Cookies from "js-cookie";
 const API_URL = 'http://localhost:3000';  // Remplacez par l'URL de votre backend
 
 const cryptoService = {
+    getAdminCryptoList: async () => {
+        try {
+            const response = await axios.get(`${API_URL}/api/cryptos/admin`,{
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('JWT')}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Erreur lors de la récupération de la liste des cryptos pour l\'admin :', error);
+            throw error;
+        }
+    },
     getCryptoList: async () => {
         try {
             const response = await axios.get(`${API_URL}/api/cryptos`);
