@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 exports.getUserProfile = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.userId;
 
     if (!userId) {
       throw new Error("ID utilisateur manquant.");
