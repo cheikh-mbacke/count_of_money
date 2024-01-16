@@ -40,7 +40,7 @@ exports.handleGoogleLogin = async (req, res) => {
         .status(200)
         .cookie("JWT", us.token)
         .cookie("user", userEncoded)
-        .redirect('http://localhost:3001/dashbord');
+        .redirect('http://localhost:3001/welcome');
   } catch (e) {
     console.log(e)
     res

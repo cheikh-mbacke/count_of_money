@@ -71,7 +71,7 @@ const Header = () => {
                     </NavLink>
                     {
                         !user ?
-                            <NavLink to="/dashbord" className="text-white md:text-xl md:font-bold font-serif mx-4"
+                            <NavLink to="/market" className="text-white md:text-xl md:font-bold font-serif mx-4"
                                      activeClassName="underline">
                                 Market
                             </NavLink>
@@ -139,7 +139,7 @@ const Header = () => {
                                         </Menu.Item>
                                         <Menu.Item>
                                             {({active}) => (
-                                                <NavLink to="/dashbord"
+                                                <NavLink to="/market"
                                                          className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                                                 >
                                                     Market

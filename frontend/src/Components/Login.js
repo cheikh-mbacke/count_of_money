@@ -35,7 +35,7 @@ const Login = () => {
                 const cookieLogin = encodeURIComponent(JSON.stringify(user))
                 Cookies.set('JWT', user.token)
                 Cookies.set('userLogin', cookieLogin);
-                navigate("/dashbord");
+                navigate("/welcome");
             } catch (error) {
                 console.error('Error logging in:', error);
             }

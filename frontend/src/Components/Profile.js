@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
 import axios from 'axios';
 import userService from "../Actions/User";
+import NonConnect from "./NonConnect";
 
 const Profile = () => {
-    const user = useSelector((state) => state.auth.user);
-    console.log(user)
+    const us = useSelector((state) => state.auth.user);
+    const [user, setUser] = useState(null)
     const [cryptoPrices, setCryptoPrices] = useState({});
     const [totalCryptoValueInEuros, setTotalCryptoValueInEuros] = useState(0);
     const [isEditing, setIsEditing] = useState(false);
@@ -13,39 +14,49 @@ const Profile = () => {
         pseudo: "",
         email: "",
     });
-    console.log(editProfile)
 
     const conversionRateUSDToEUR = 0.9;
 
-    useEffect(() => {
-        if (user) {
-            setEditProfile({
-                pseudo: user.pseudo,
-                email: user.email,
-            });
-        }
-        const getCryptoPrices = async () => {
-            try {
-                const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
-                const prices = {};
-                let totalValueUSD = 0;
-                response.data.forEach(coin => {
-                    prices[coin.id] = Math.round(coin.current_price);
+    const fetchDataUser = async () => {
+        if (us) {
+            try{
+                const response = await userService.getUserProfile()
+                setUser(response)
+                setEditProfile({
+                    pseudo: response.pseudo,
+                    email: response.email,
                 });
-                setCryptoPrices(prices);
-
-                userWallet.forEach(crypto => {
-                    totalValueUSD += (crypto.amount * (prices[crypto.name] || 0));
-                });
-
-                setTotalCryptoValueInEuros(Math.round(totalValueUSD * conversionRateUSDToEUR));
             } catch (error) {
-                console.error("Erreur lors de la récupération des prix des cryptomonnaies", error);
+                console.error("Erreur lors de la récupération du profil de l'utilisateur", error);
             }
-        };
+        }
+    }
 
+    const getCryptoPrices = async () => {
+        try {
+            const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+            const prices = {};
+            let totalValueUSD = 0;
+            response.data.forEach(coin => {
+                prices[coin.id] = Math.round(coin.current_price);
+            });
+            setCryptoPrices(prices);
+
+            userWallet.forEach(crypto => {
+                totalValueUSD += (crypto.amount * (prices[crypto.name] || 0));
+            });
+
+            setTotalCryptoValueInEuros(Math.round(totalValueUSD * conversionRateUSDToEUR));
+        } catch (error) {
+            console.error("Erreur lors de la récupération des prix des cryptomonnaies", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDataUser()
         getCryptoPrices();
-    }, []);
+    }, [us]);
+
 
     const handleEditChange = (e) => {
         setEditProfile({...editProfile, [e.target.name]: e.target.value});
@@ -54,12 +65,12 @@ const Profile = () => {
     const submitEditProfile = async () => {
         try {
             const payload = {
-                userId: user.userId,
+                userId: user.id,
                 ...editProfile
             }
-            console.log(payload)
             await userService.updateUserProfile(payload)
             setIsEditing(false);
+            fetchDataUser()
         } catch (error) {
             console.error('Erreur lors de la mise à jour du profil :', error);
         }
@@ -158,7 +169,7 @@ const Profile = () => {
                     </div>
                 </>
             ) : (
-                <p>Aucun utilisateur connecté</p>
+                <NonConnect/>
             )}
         </div>
     );

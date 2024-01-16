@@ -13,6 +13,7 @@ import Coin from "./Components/Coin";
 import Trade from "./Components/Trade";
 import ArticlesList from "./Components/ArticlesList";
 import NonConnect from "./Components/NonConnect";
+import Welcome from "./Components/Welcome";
 
 
 const App = () => {
@@ -26,7 +27,7 @@ const App = () => {
                     <Route path="/about" element={<About/>} />
                     <Route path="/login" element={<Login/>} />
                     <Route path="/signup" element={<Signup/>} />
-                    <Route path="/dashbord" element={<Dashbord/>}/>
+                    <Route path="/market" element={<Dashbord/>}/>
                     <Route path="/coin" element={<Coin/>} >
                         <Route path=":coinId" element={<Coin/>}/>
                     </Route>
@@ -35,7 +36,8 @@ const App = () => {
                     </Route>
                     <Route path="/profile" element={<Profile/>} />
                     <Route path="/articles" element={<ArticlesList />} />
-                    <Route path="/unauth" element={<NonConnect />} />
+                    <Route path="/*" element={<NonConnect />} />
+                    <Route path="/welcome"  element={<Welcome/>} />
                 </Routes>
             <Footer/>
             </div>

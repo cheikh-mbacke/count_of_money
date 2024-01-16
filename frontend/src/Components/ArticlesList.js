@@ -22,7 +22,7 @@ const ArticlesList = () => {
                     setTotalPages(Math.ceil(response.length / articlesPerPage));
                     setError("");
                 } else {
-                    const response = await newsService.getArticles(1);
+                    const response = await newsService.getArticles();
                     setArticles(response);
                     setTotalPages(Math.ceil(response.length / articlesPerPage));
                     setError("");

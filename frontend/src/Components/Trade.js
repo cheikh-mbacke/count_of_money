@@ -39,6 +39,7 @@ const Trade = () => {
                 if (selectedChartType === "candlestick") {
                     const apiEndpoint = `https://api.coingecko.com/api/v3/coins/${params.coinId}/ohlc?vs_currency=${selectedCurrency}&days=${selectedOhlcDays}`;
                     response = await axios.get(apiEndpoint);
+                    console.log(response.data)
                     chartRawData = response.data;
 
                     setChartData(chartRawData);
@@ -137,7 +138,7 @@ const Trade = () => {
                     <>
                         <LoaderComponent loading={loading}/>
 
-                        <Link to="/dashbord" className="m-5 text-green-300">
+                        <Link to="/market" className="m-5 text-green-300">
                             <FontAwesomeIcon icon={faArrowLeft}/>
                         </Link>
 

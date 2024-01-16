@@ -39,9 +39,13 @@ const userService = {
         }
     },
 
-    getUserProfile: async (data) => {
+    getUserProfile: async () => {
         try {
-            const response = await axios.get(`${API_URL}/api/users/profile`, data);
+            const response = await axios.get(`${API_URL}/api/users/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('JWT')}`
+                }
+            });
             return response.data;
         } catch (error) {
             console.error('Erreur lors de la récupération du profil utilisateur :', error);
@@ -51,7 +55,11 @@ const userService = {
 
     updateUserProfile: async (data) => {
         try {
-            const response = await axios.put(`${API_URL}/api/users/profile`, data);
+            const response = await axios.put(`${API_URL}/api/users/profile`, data, {
+                headers: {
+                    'Authorization': `Bearer ${Cookies.get('JWT')}`
+                }
+            })
             return response.data;
         } catch (error) {
             console.error('Erreur lors de la mise à jour du profil utilisateur :', error);

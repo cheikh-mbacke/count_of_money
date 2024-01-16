@@ -35,7 +35,9 @@ exports.login = async (req, res) => {
       userId: user.id,
       roleName: roleName,
       token: token,
-      email: user.email
+      email: user.email,
+      preferredCryptocurrencies: user.preferredCryptocurrencies,
+      pressReviewKeywords: user.pressReviewKeywords
     });
   } catch (error) {
     res
